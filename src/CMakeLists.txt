@@ -65,6 +65,7 @@ list(APPEND GAME_SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/monster_shadow.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/monster_vampire.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/monster_mimic.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/monster_reptilian.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/shops.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/mechanisms.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/actgate.cpp"

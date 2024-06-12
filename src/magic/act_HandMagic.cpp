@@ -306,6 +306,7 @@ void actLeftHandMagic(Entity* my)
 				my->sprite = 777;
 				break;
 			case GOBLIN:
+			case REPTILIAN://jannik323
 				my->sprite = 779;
 				break;
 			case AUTOMATON:
@@ -663,6 +664,7 @@ void actRightHandMagic(Entity* my)
 				my->sprite = 778;
 				break;
 			case GOBLIN:
+			case REPTILIAN://jannik323
 				my->sprite = 780;
 				break;
 			case AUTOMATON:

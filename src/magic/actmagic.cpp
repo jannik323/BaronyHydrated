@@ -3367,6 +3367,305 @@ void actMagicMissile(Entity* my)   //TODO: Verify this function.
 						}
 					}
 				}
+				if (!strcmp(element->element_internal_name, spellElement_force.element_internal_name))
+				{
+					if (hit.entity)
+					{
+						if ( mimic )
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->chestHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if (hit.entity->behavior == &actMonster || hit.entity->behavior == &actPlayer)
+						{
+							Entity* parent = uidToEntity(my->parent);
+							playSoundEntity(hit.entity, 28, 128);
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							//damage += ((element->mana - element->base_mana) / static_cast<double>(element->overload_multiplier)) * element->damage;
+							damage *= damageMultiplier;
+							damage /= (1 + (int)resistance);
+							hit.entity->modHP(-damage);
+							for (i = 0; i < damage; i += 2)   //Spawn a gib for every two points of damage.
+							{
+								Entity* gib = spawnGib(hit.entity);
+								serverSpawnGibForClient(gib);
+							}
+
+							if (parent)
+							{
+								parent->killedByMonsterObituary(hit.entity);
+							}
+
+							// update enemy bar for attacker
+							if ( !strcmp(hitstats->name, "") )
+							{
+								updateEnemyBar(parent, hit.entity, getMonsterLocalizedName(hitstats->type).c_str(), hitstats->HP, hitstats->MAXHP,
+									false, dmgGib);
+							}
+							else
+							{
+								updateEnemyBar(parent, hit.entity, hitstats->name, hitstats->HP, hitstats->MAXHP,
+									false, dmgGib);
+							}
+
+							if ( hitstats->HP <= 0 && parent)
+							{
+								parent->awardXP( hit.entity, true, true );
+								spawnBloodVialOnMonsterDeath(hit.entity, hitstats, parent);
+							}
+						}
+						else if (hit.entity->behavior == &actDoor)
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->doorHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if ( hit.entity->isDamageableCollider() && hit.entity->isColliderDamageableByMagic() )
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->colliderHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if ( hit.entity->behavior == &actChest )
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->chestHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if (hit.entity->behavior == &actFurniture )
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							int oldHP = hit.entity->furnitureHealth;
+							hit.entity->furnitureHealth -= damage;
+							if ( parent )
+							{
+								if ( parent->behavior == &actPlayer )
+								{
+									bool destroyed = oldHP > 0 && hit.entity->furnitureHealth <= 0;
+									if ( destroyed )
+									{
+										gameModeManager.currentSession.challengeRun.updateKillEvent(hit.entity);
+									}
+									switch ( hit.entity->furnitureType )
+									{
+										case FURNITURE_CHAIR:
+											if ( destroyed )
+											{
+												messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(388));
+											}
+											updateEnemyBar(parent, hit.entity, Language::get(677), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+												false, DamageGib::DMG_DEFAULT);
+											break;
+										case FURNITURE_TABLE:
+											if ( destroyed )
+											{
+												messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(389));
+											}
+											updateEnemyBar(parent, hit.entity, Language::get(676), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+												false, DamageGib::DMG_DEFAULT);
+											break;
+										case FURNITURE_BED:
+											if ( destroyed )
+											{
+												messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(2508), Language::get(2505));
+											}
+											updateEnemyBar(parent, hit.entity, Language::get(2505), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+												false, DamageGib::DMG_DEFAULT);
+											break;
+										case FURNITURE_BUNKBED:
+											if ( destroyed )
+											{
+												messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(2508), Language::get(2506));
+											}
+											updateEnemyBar(parent, hit.entity, Language::get(2506), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+												false, DamageGib::DMG_DEFAULT);
+											break;
+										case FURNITURE_PODIUM:
+											if ( destroyed )
+											{
+												messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(2508), Language::get(2507));
+											}
+											updateEnemyBar(parent, hit.entity, Language::get(2507), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+												false, DamageGib::DMG_DEFAULT);
+											break;
+										default:
+											break;
+									}
+								}
+							}
+							playSoundEntity(hit.entity, 28, 128);
+						}
+					}
+				}if (!strcmp(element->element_internal_name, spellElement_waterBolt.element_internal_name))//jannik323
+				{
+					if (hit.entity)
+					{
+						if (mimic)
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->chestHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if (hit.entity->behavior == &actMonster || hit.entity->behavior == &actPlayer)
+						{
+							Entity* parent = uidToEntity(my->parent);
+							playSoundEntity(hit.entity, 28, 128);
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							//damage += ((element->mana - element->base_mana) / static_cast<double>(element->overload_multiplier)) * element->damage;
+							damage *= damageMultiplier;
+							damage /= (1 + (int)resistance);
+							hit.entity->modHP(-damage);
+							for (i = 0; i < damage; i += 2)   //Spawn a gib for every two points of damage.
+							{
+								Entity* gib = spawnGib(hit.entity);
+								serverSpawnGibForClient(gib);
+							}
+
+							if (parent)
+							{
+								parent->killedByMonsterObituary(hit.entity);
+							}
+
+							// update enemy bar for attacker
+							if (!strcmp(hitstats->name, ""))
+							{
+								updateEnemyBar(parent, hit.entity, getMonsterLocalizedName(hitstats->type).c_str(), hitstats->HP, hitstats->MAXHP,
+									false, dmgGib);
+							}
+							else
+							{
+								updateEnemyBar(parent, hit.entity, hitstats->name, hitstats->HP, hitstats->MAXHP,
+									false, dmgGib);
+							}
+
+							if (hitstats->HP <= 0 && parent)
+							{
+								parent->awardXP(hit.entity, true, true);
+								spawnBloodVialOnMonsterDeath(hit.entity, hitstats, parent);
+							}
+						}
+						else if (hit.entity->behavior == &actDoor)
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->doorHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if (hit.entity->isDamageableCollider() && hit.entity->isColliderDamageableByMagic())
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->colliderHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if (hit.entity->behavior == &actChest)
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							hit.entity->chestHandleDamageMagic(damage, *my, parent);
+							my->removeLightField();
+							list_RemoveNode(my->mynode);
+							return;
+						}
+						else if (hit.entity->behavior == &actFurniture)
+						{
+							int damage = element->damage;
+							damage += (spellbookDamageBonus * damage);
+							damage /= (1 + (int)resistance);
+							int oldHP = hit.entity->furnitureHealth;
+							hit.entity->furnitureHealth -= damage;
+							if (parent)
+							{
+								if (parent->behavior == &actPlayer)
+								{
+									bool destroyed = oldHP > 0 && hit.entity->furnitureHealth <= 0;
+									if (destroyed)
+									{
+										gameModeManager.currentSession.challengeRun.updateKillEvent(hit.entity);
+									}
+									switch (hit.entity->furnitureType)
+									{
+									case FURNITURE_CHAIR:
+										if (destroyed)
+										{
+											messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(388));
+										}
+										updateEnemyBar(parent, hit.entity, Language::get(677), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+											false, DamageGib::DMG_DEFAULT);
+										break;
+									case FURNITURE_TABLE:
+										if (destroyed)
+										{
+											messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(389));
+										}
+										updateEnemyBar(parent, hit.entity, Language::get(676), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+											false, DamageGib::DMG_DEFAULT);
+										break;
+									case FURNITURE_BED:
+										if (destroyed)
+										{
+											messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(2508), Language::get(2505));
+										}
+										updateEnemyBar(parent, hit.entity, Language::get(2505), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+											false, DamageGib::DMG_DEFAULT);
+										break;
+									case FURNITURE_BUNKBED:
+										if (destroyed)
+										{
+											messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(2508), Language::get(2506));
+										}
+										updateEnemyBar(parent, hit.entity, Language::get(2506), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+											false, DamageGib::DMG_DEFAULT);
+										break;
+									case FURNITURE_PODIUM:
+										if (destroyed)
+										{
+											messagePlayer(parent->skill[2], MESSAGE_COMBAT, Language::get(2508), Language::get(2507));
+										}
+										updateEnemyBar(parent, hit.entity, Language::get(2507), hit.entity->furnitureHealth, hit.entity->furnitureMaxHealth,
+											false, DamageGib::DMG_DEFAULT);
+										break;
+									default:
+										break;
+									}
+								}
+							}
+							playSoundEntity(hit.entity, 28, 128);
+						}
+					}
+				}//
 				else if ( !strcmp(element->element_internal_name, spellElement_dominate.element_internal_name) )
 				{
 					Entity *caster = uidToEntity(spell->caster);

@@ -431,6 +431,15 @@ void setupSpells()   ///TODO: Verify this function.
 	spellElement_ghostBolt.duration = 75;
 	strcpy(spellElement_ghostBolt.element_internal_name, "spell_element_ghost_bolt");
 
+	spellElementConstructor(&spellElement_waterBolt);//jannik323
+	spellElement_waterBolt.mana = 3;
+	spellElement_waterBolt.base_mana = 3;
+	spellElement_waterBolt.overload_multiplier = 1;
+	spellElement_waterBolt.damage = 25;
+	spellElement_waterBolt.duration = 0;
+	strcpy(spellElement_waterBolt.element_internal_name, "spell_element_water_bolt");
+	//
+
 	spellConstructor(&spell_forcebolt);
 	strcpy(spell_forcebolt.spell_internal_name, "spell_forcebolt");
 	spell_forcebolt.ID = SPELL_FORCEBOLT;
@@ -1322,4 +1331,25 @@ void setupSpells()   ///TODO: Verify this function.
 	node->deconstructor = &spellElementDeconstructor;
 	element = (spellElement_t*)node->element;
 	element->node = node;
+	//jannik323
+	spellConstructor(&spell_water_bolt);
+	strcpy(spell_water_bolt.spell_internal_name, "spell_water_bolt");
+	spell_water_bolt.ID = SPELL_WATER_BOLT;
+	spell_water_bolt.difficulty = 0;
+	node = list_AddNodeLast(&spell_water_bolt.elements);
+	node->element = copySpellElement(&spellElement_missile);
+	node->size = sizeof(spellElement_t);
+	node->deconstructor = &spellElementDeconstructor;
+	element = (spellElement_t*)node->element;
+	element->node = node; //Tell the element what list it resides in.
+	//Now for the second element.
+	element->elements.first = NULL;
+	element->elements.last = NULL;
+	node = list_AddNodeLast(&element->elements);
+	node->element = copySpellElement(&spellElement_waterBolt);
+	node->size = sizeof(spellElement_t);
+	node->deconstructor = &spellElementDeconstructor;
+	element = (spellElement_t*)node->element;
+	element->node = node;
+	//
 }

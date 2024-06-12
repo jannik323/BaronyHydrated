@@ -244,6 +244,7 @@ Entity* entityClicked(bool* clickedOnGUI, bool clickCheckOverride, int player, E
 					sfx = 291 + local_rng.rand() % 4;
 					break;
 				case GOBLIN:
+				case REPTILIAN://jannik323
 					sfx = 60 + local_rng.rand() % 3;
 					break;
 				case AUTOMATON:

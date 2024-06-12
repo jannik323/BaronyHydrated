@@ -213,6 +213,15 @@ void actSink(Entity* my)
 								}
 								players[i]->entity->modHP(1);
 							}
+							else if (stats[i]->type == REPTILIAN ){//jannik323
+								playSoundEntity(players[i]->entity, 52, 64);
+								messagePlayer(i, MESSAGE_INTERACTION, "The tap water refreshes you. You feel less dry.");
+								stats[i]->WATER += 100;
+								//serverUpdateWater(i);
+								stats[i]->HUNGER += 50; //Less nutrition than the refreshing fountain.
+								serverUpdateHunger(i);
+								players[i]->entity->modHP(1);
+							}//
 							else
 							{
 								players[i]->entity->modHP(-2);
@@ -259,36 +268,43 @@ void actSink(Entity* my)
 							}
 							else
 							{
-								if ( stats[i]->type != VAMPIRE )
-								{
-									players[i]->entity->modHP(-2);
+								if (stats[i]->type == REPTILIAN) {//jannik323
+									playSoundEntity(players[i]->entity, 52, 64);
+									messagePlayer(i, MESSAGE_INTERACTION, "The water is scalding, but refreshes you somewhat.");
+									stats[i]->WATER += 50;
+									//serverUpdateWater(i);
 								}
-								else
-								{
-									players[i]->entity->modHP(-2);
-									playSoundEntity(players[i]->entity, 249, 128);
-								}
-								playSoundEntity(players[i]->entity, 28, 64);
-								players[i]->entity->setObituary(Language::get(1533));
-						        stats[i]->killer = KilledBy::SINK;
+								else {//
+									if ( stats[i]->type != VAMPIRE )
+									{
+										players[i]->entity->modHP(-2);
+									}
+									else
+									{
+										players[i]->entity->modHP(-2);
+										playSoundEntity(players[i]->entity, 249, 128);
+									}
+									playSoundEntity(players[i]->entity, 28, 64);
+									players[i]->entity->setObituary(Language::get(1533));
+									stats[i]->killer = KilledBy::SINK;
 
-								Uint32 color = makeColorRGB(255, 0, 0);
-								messagePlayerColor(i, MESSAGE_STATUS, color, Language::get(584));
-
-								if ( i >= 0 && players[i]->isLocalPlayer() )
-								{
-									cameravars[i].shakex += .1;
-									cameravars[i].shakey += 10;
-								}
-								else if ( multiplayer == SERVER && i > 0 && !players[i]->isLocalPlayer() )
-								{
-									strcpy((char*)net_packet->data, "SHAK");
-									net_packet->data[4] = 10; // turns into .1
-									net_packet->data[5] = 10;
-									net_packet->address.host = net_clients[i - 1].host;
-									net_packet->address.port = net_clients[i - 1].port;
-									net_packet->len = 6;
-									sendPacketSafe(net_sock, -1, net_packet, i - 1);
+									Uint32 color = makeColorRGB(255, 0, 0);
+									messagePlayerColor(i, MESSAGE_STATUS, color, Language::get(584));
+									if ( i >= 0 && players[i]->isLocalPlayer() )
+									{
+										cameravars[i].shakex += .1;
+										cameravars[i].shakey += 10;
+									}
+									else if ( multiplayer == SERVER && i > 0 && !players[i]->isLocalPlayer() )
+									{
+										strcpy((char*)net_packet->data, "SHAK");
+										net_packet->data[4] = 10; // turns into .1
+										net_packet->data[5] = 10;
+										net_packet->address.host = net_clients[i - 1].host;
+										net_packet->address.port = net_clients[i - 1].port;
+										net_packet->len = 6;
+										sendPacketSafe(net_sock, -1, net_packet, i - 1);
+									}
 								}
 							}
 							break;

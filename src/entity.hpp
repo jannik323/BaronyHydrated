@@ -44,6 +44,7 @@ class Entity
 {
 	Sint32& circuit_status;	// Use CIRCUIT_OFF and CIRCUIT_ON.
 	Sint32& switch_power;	// Switch/mechanism power status.
+	Sint32& gate_inputs;	// gate/mechanism power status.//jannik323
 	Sint32& chanceToPutOutFire; // skill[37] - Value between 5 and 10, with 10 being the default starting chance, and 5 being absolute minimum
 
 	// Power crystal skills
@@ -548,6 +549,7 @@ public:
 	Sint32& signalTimerRepeatCount; //skill[3]
 	Sint32& signalTimerLatchInput; //skill[4]
 	Sint32& signalInputDirection; //skill[5]
+	Sint32& signalGateType; //skill[6]//jannik323
 
 	//--THROWN PROJECTILE--
 	Sint32& thrownProjectilePower; //skill[19]
@@ -606,6 +608,7 @@ public:
 
 	void handleEffects(Stat* myStats);
 	static int getHungerTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffects);
+	static int getWaterTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffects);//jannik323
 	void handleEffectsClient();
 
 	void effectTimes();
@@ -658,6 +661,7 @@ public:
 	bool automatonCanWieldItem(const Item& item) const;
 	bool shadowCanWieldItem(const Item& item) const;
 	bool insectoidCanWieldItem(const Item& item) const;
+	bool reptilianCanWieldItem(const Item& item) const;//jannik323
 
 	bool monsterWantsItem(const Item& item, Item**& shouldEquip, node_t*& replaceInventoryItem) const;
 
@@ -689,6 +693,8 @@ public:
 	void updateCircuitNeighbors(); //Called when a circuit's powered state changes.
 	void mechanismPowerOn(); //Called when a circuit or switch next to a mechanism powers on.
 	void mechanismPowerOff(); //Called when a circuit or switch next to a mechanism powers on.
+	void mechanismPowerOnMultipleInput(byte input); //Called when a circuit or switch next to a gate mechanism powers on.//jannik323
+	void mechanismPowerOffMultipleInput(byte input); //Called when a circuit or switch next to a gate mechanism powers on.//jannik323
 	void toggleSwitch(int skillIndexForPower = -1); //Called when a player flips a switch (lever). skillIndexForPower can use any skill[] to reference for the entity power status (defaults to skill[0] for switches)
 	void switchUpdateNeighbors(); //Run each time actSwitch() is called to make sure the network is online if any one switch connected to it is still set to the on position.
 	list_t* getPowerableNeighbors(); //Returns a list of all circuits and mechanisms this entity can influence.
@@ -740,6 +746,7 @@ public:
 	void actLightSource();
 	void actTextSource();
 	void actSignalTimer();
+	void actSignalGate();//jannik323
 
 	Monster getRace() const
 	{
@@ -1149,7 +1156,7 @@ void actTextSource(Entity* my);
 
 static const int NUM_ITEM_STRINGS = 333;
 static const int NUM_ITEM_STRINGS_BY_TYPE = 129;
-static const int NUM_EDITOR_SPRITES = 180;
+static const int NUM_EDITOR_SPRITES = 182;//jannik323
 static const int NUM_EDITOR_TILES = 350;
 
 // furniture types.
@@ -1226,6 +1233,15 @@ enum EntityHungerIntervals : int
 	HUNGER_INTERVAL_AUTOMATON_CRITICAL
 };
 int getEntityHungerInterval(int player, Entity* my, Stat* myStats, EntityHungerIntervals hungerInterval);
+enum EntityWaterIntervals : int//jannik323
+{
+	WATER_INTERVAL_SUPERWET,
+	WATER_INTERVAL_WET,
+	WATER_INTERVAL_DRY,
+	WATER_INTERVAL_SUPERDRY,
+};
+int getEntityWaterInterval(int player, Entity* my, Stat* myStats, EntityWaterIntervals waterInterval);
+//
 
 //Fountain potion drop chance variables.
 extern const std::vector<unsigned int> fountainPotionDropChances;
@@ -1285,7 +1301,8 @@ public:
 		TO_SENTRYBOT,
 		TO_SPELLBOT,
 		TO_GYROBOT,
-		TO_DUMMYBOT
+		TO_DUMMYBOT,
+		TO_REPTILIAN//jannik323
 	};
 	enum ScriptType : int
 	{

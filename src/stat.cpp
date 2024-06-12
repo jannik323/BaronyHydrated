@@ -346,6 +346,7 @@ void Stat::clearStats()
 	this->CHR = 0;
 	this->GOLD = 0;
 	this->HUNGER = 1000;
+	this->WATER = 500;//jannik323
 	this->LVL = 1;
 	this->EXP = 0;
 	list_FreeAll(&this->FOLLOWERS);
@@ -579,6 +580,7 @@ Stat* Stat::copyStats()
 	newStat->LVL = this->LVL;
 	newStat->GOLD = this->GOLD;
 	newStat->HUNGER = this->HUNGER;
+	newStat->WATER = this->WATER;//jannik323
 
 	for (c = 0; c < NUMPROFICIENCIES; c++)
 	{
@@ -831,6 +833,7 @@ void Stat::printStats()
 	printlog("LVL = %d\n", this->LVL);
 	printlog("GOLD = %d\n", this->GOLD);
 	printlog("HUNGER = %d\n", this->HUNGER);
+	printlog("WATER = %d\n", this->WATER);//jannik323
 
 	printlog("Proficiencies:");
 	for (int i = 0; i < NUMPROFICIENCIES; ++i)

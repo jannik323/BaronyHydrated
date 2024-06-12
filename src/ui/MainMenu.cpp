@@ -8826,7 +8826,7 @@ bind_failed:
             assert(character_title);
             snprintf(buf, sizeof(buf), Language::get(5298),
                 score->stats->LVL,
-                Language::get(5369 + score->stats->playerRace),
+				score->stats->playerRace == 9 ? "Reptilian" : Language::get(5369 + score->stats->playerRace),//jannik323
                 playerClassLangEntry(score->classnum, 0));
             character_title->setText(buf);
 
@@ -12708,7 +12708,7 @@ failed:
 	};
     
     // number of player selectable races
-	constexpr int num_races = 9;
+	constexpr int num_races = 10;//jannik323
 
 	bool ClassDescriptions::init = false;
 	std::unordered_map<int, ClassDescriptions::DescData_t> ClassDescriptions::data;
@@ -13470,7 +13470,7 @@ failed:
 			&& gameModeManager.currentSession.challengeRun.classnum >= 0 && gameModeManager.currentSession.challengeRun.classnum <= NUMCLASSES;
 
 		for (int c = 0; c < num_races; ++c) {
-			auto race = Language::get(5369 + c);
+			auto race = c==9?"Reptilian":Language::get(5369 + c);//jannik323
 			if (strcmp(button.getName(), race) == 0) {
 				if ( fixedRace && !override_dlc && gameModeManager.currentSession.challengeRun.race != c )
 				{
@@ -13501,12 +13501,13 @@ failed:
 				else 
 				{
                     success = true;
-                    if (stats[index]->playerRace != c) {
-                        stats[index]->playerRace = c;
+					int targetPlayerRace = c;//jannik323
+                    if (stats[index]->playerRace != targetPlayerRace) {
+                        stats[index]->playerRace = targetPlayerRace;
                         if (!inputs.hasController(index)) {
                             soundToggle();
                         }
-                    }
+                    }//
 					if (stats[index]->playerRace == RACE_SUCCUBUS) {
                         if (wasHuman) {
                             stats[index]->appearance = 0;
@@ -13572,7 +13573,7 @@ failed:
 		}
 		for (int c = 0; c < num_races; ++c) {
 			// clear other buttons
-			auto race = Language::get(5369 + c);
+			auto race = c == 9 ? "Reptilian" : Language::get(5369 + c);//jannik323
 			auto other_button = frame->findButton(race);
 			if (other_button != &button) {
 				other_button->setPressed(false);
@@ -15422,7 +15423,7 @@ failed:
 		gradient->ontop = true;
 
         for (int c = 0; c < num_races; ++c) {
-		    auto race = subframe->addButton(Language::get(5369 + c));
+		    auto race = subframe->addButton(c == 9 ? "Reptilian" : Language::get(5369 + c));//jannik323
 		    race->setSize(SDL_Rect{0, c * 36 + 2, 30, 30});
 
 			bool fixedRace = gameModeManager.currentSession.challengeRun.isActive()
@@ -15476,7 +15477,7 @@ failed:
 		    race->addWidgetAction("MenuPageLeftAlt", "privacy");
 		    race->setWidgetBack("back_button");
 		    if (c < num_races - 1) {
-		        race->setWidgetDown(Language::get(5369 + c + 1));
+		        race->setWidgetDown(c + 1== 9 ?"Reptilian" : Language::get(5369 + c + 1));//jannik323
 		    }
 		    /*else {
 		        race->setWidgetDown("disable_abilities");
@@ -15527,7 +15528,7 @@ failed:
                 }
 		        });
 
-		    auto label = subframe->addField((std::string(Language::get(5369 + c)) + "_label").c_str(), 64);
+		    auto label = subframe->addField((std::string(c == 9 ? "Reptilian" : Language::get(5369 + c)) + "_label").c_str(), 64);//jannik323
 		    if (c >= 1 && c <= 4) {
 		        label->setColor(color_dlc1);
 		    } else if (c >= 5 && c <= 8) {
@@ -15535,7 +15536,7 @@ failed:
 		    } else {
 		        label->setColor(color_dlc0);
 		    }
-		    label->setText(Language::get(5369 + c));
+		    label->setText(c == 9 ? "Reptilian" : Language::get(5369 + c));//jannik323
 		    label->setFont(smallfont_outline);
 		    label->setSize(SDL_Rect{32, c * 36, 96, 36});
 		    label->setHJustify(Field::justify_t::LEFT);
@@ -15805,7 +15806,7 @@ failed:
 		disable_abilities->addWidgetAction("MenuPageLeftAlt", "privacy");
 		disable_abilities->setWidgetBack("back_button");
 		disable_abilities->setWidgetDown("show_race_info");
-		disable_abilities->setWidgetUp(Language::get(5369 + num_races - 1));
+		disable_abilities->setWidgetUp("Reptilian");//jannik323
 		if (stats[index]->playerRace != RACE_HUMAN) {
 			disable_abilities->setPressed(stats[index]->appearance != 0);
 		}
@@ -17040,7 +17041,7 @@ failed:
 		race_button->setColor(makeColor(255, 255, 255, 255));
 		race_button->setHighlightColor(makeColor(255, 255, 255, 255));
 		race_button->setSize(SDL_Rect{166, 166, 108, 52});
-		race_button->setText(Language::get(5369 + stats[index]->playerRace));
+		race_button->setText(stats[index]->playerRace == 9 ? "Reptilian" : Language::get(5369 + stats[index]->playerRace));//jannik323
 		race_button->setFont(smallfont_outline);
 		race_button->setBackground("*images/ui/Main Menus/Play/PlayerCreation/Finalize_Button_RaceBase_00.png");
 		race_button->setBackgroundHighlighted("*images/ui/Main Menus/Play/PlayerCreation/Finalize_Button_RaceBaseHigh_00.png");
@@ -17135,7 +17136,7 @@ failed:
 			}
 
 			auto race_button = card->findButton("race");
-			race_button->setText(Language::get(5369 + stats[index]->playerRace));
+			race_button->setText(stats[index]->playerRace == 9 ? "Reptilian" : Language::get(5369 + stats[index]->playerRace));//jannik323
 
 			// choose a random appearance
 			const int appearance_choice = RNG.uniform(0, NUMAPPEARANCES - 1);
@@ -26376,6 +26377,9 @@ failed:
 		case KilledBy::FAILED_CHALLENGE:
 			cause_of_death = Language::get(6153);
 			break;
+		case KilledBy::DEHYDRATION://jannik323
+			cause_of_death = "Dehydration";
+			break;//
         default: {
             cause_of_death = Language::get(5794 + (int)stats[player]->killer);
             break;

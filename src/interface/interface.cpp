@@ -4312,6 +4312,7 @@ int FollowerRadialMenu::optionDisabledForCreature(int playerSkillLVL, int monste
 			creatureTier = 0;
 			break;
 		case GOBLIN:
+		case REPTILIAN://jannik323
 		case TROLL:
 		case GHOUL:
 		case GNOME:
@@ -4683,6 +4684,7 @@ bool FollowerRadialMenu::allowedClassToggle(int monsterType)
 		case GOBLIN:
 		case AUTOMATON:
 		case GOATMAN:
+		case REPTILIAN://jannik323
 			return true;
 			break;
 		default:
@@ -4699,6 +4701,7 @@ bool FollowerRadialMenu::allowedItemPickupToggle(int monsterType)
 		case GOBLIN:
 		case AUTOMATON:
 		case GOATMAN:
+		case REPTILIAN://jannik323
 			return true;
 			break;
 		default:
@@ -4724,6 +4727,7 @@ bool FollowerRadialMenu::allowedInteractFood(int monsterType)
 		case TROLL:
 		case COCKATRICE:
 		case SCARAB:
+		case REPTILIAN://jannik323
 			return true;
 			break;
 		default:
@@ -4744,6 +4748,7 @@ bool FollowerRadialMenu::allowedInteractWorld(int monsterType)
 		case GOATMAN:
 		case SKELETON:
 		case GYROBOT:
+		case REPTILIAN://jannik323
 			return true;
 			break;
 		default:
@@ -4768,6 +4773,7 @@ bool FollowerRadialMenu::allowedInteractItems(int monsterType)
 		case VAMPIRE:
 		case SLIME:
 		case GYROBOT:
+		case REPTILIAN://jannik323
 			if ( followerToCommand && followerToCommand->monsterAllySummonRank != 0 )
 			{
 				return false;

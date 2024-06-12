@@ -179,7 +179,14 @@ void actFountain(Entity* my)
 						steamAchievementClient(i, "BARONY_ACH_HOT_SHOWER");
 					}
 					int potionDropQuantity = 0;
-					if ( stats[i] && (stats[i]->type == GOATMAN || (stats[i]->playerRace == RACE_GOATMAN && stats[i]->appearance == 0)) )
+					//jannik323
+					if (stats[i] && (stats[i]->type == REPTILIAN || (stats[i]->playerRace == RACE_REPTILIAN && stats[i]->appearance == 0)))
+					{
+						messagePlayer(i, MESSAGE_INTERACTION, "You feel less dry!");
+						stats[i]->WATER += 150;
+						//serverUpdateWater(i);
+					//
+					}else if ( stats[i] && (stats[i]->type == GOATMAN || (stats[i]->playerRace == RACE_GOATMAN && stats[i]->appearance == 0)) )
 					{
 						// drop some random potions.
 						switch ( rng.rand() % 10 )

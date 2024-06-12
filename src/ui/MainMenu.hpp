@@ -179,6 +179,8 @@ namespace MainMenu {
 				return "goblin";
 			case RACE_INSECTOID:
 				return "insectoid";
+			case RACE_REPTILIAN://jannik323
+				return "reptilian";
 			default:
 				break;
 			}

@@ -921,7 +921,7 @@ void actThrown(Entity* my)
 									{
 										if ( parentStats->type == GOATMAN
 											&& (hitstats->type == HUMAN || hitstats->type == GOBLIN
-												|| hitstats->type == INCUBUS || hitstats->type == SUCCUBUS )
+												|| hitstats->type == INCUBUS || hitstats->type == SUCCUBUS ||hitstats->type == REPTILIAN)//jannik323
 											&& hitstats->leader_uid == 0 )
 										{
 											if ( forceFollower(*parent, *hit.entity) )

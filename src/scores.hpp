@@ -521,6 +521,7 @@ struct SaveGameInfo {
 			int LVL = 0;
 			int GOLD = 0;
 			int HUNGER = 0;
+			int WATER = 0;//jannik323
 			std::vector<int> PROFICIENCIES;
 			std::vector<int> EFFECTS;
 			std::vector<int> EFFECTS_TIMERS;
@@ -550,6 +551,7 @@ struct SaveGameInfo {
 				fp->property("LVL", LVL);
 				fp->property("GOLD", GOLD);
 				fp->property("HUNGER", HUNGER);
+				fp->property("WATER", WATER);//jannik323
 				fp->property("PROFICIENCIES", PROFICIENCIES);
 				fp->property("EFFECTS", EFFECTS);
 				fp->property("EFFECTS_TIMERS", EFFECTS_TIMERS);

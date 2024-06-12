@@ -53,6 +53,7 @@ int checkSpriteType(Sint32 sprite)
 	case 164:
 	case 165:
 	case 166:
+	case 181://jannik323
 		//monsters
 		return 1;
 		break;
@@ -153,6 +154,8 @@ int checkSpriteType(Sint32 sprite)
 		return 26;
 	case 179:
 		return 27;
+	case 180://signal gate//jannik323
+		return 28;//
 	default:
 		return 0;
 		break;
@@ -994,7 +997,9 @@ char spriteEditorNameStrings[NUM_EDITOR_SPRITES][64] =
 	"NOT USED",
 	"TELEPORT SHRINE",
 	"SPELL SHRINE",
-	"COLLIDER DECORATION"
+	"COLLIDER DECORATION",
+	"SIGNAL GATE",//jannik323
+	"REPTILIAN"//jannik323
 };
 
 char monsterEditorNameStrings[NUMMONSTERS][16] =
@@ -1035,7 +1040,8 @@ char monsterEditorNameStrings[NUMMONSTERS][16] =
 	"sentrybot",
 	"spellbot",
 	"gyrobot",
-	"dummybot"
+	"dummybot",
+	"reptilian"//jannik323
 };
 
 char tileEditorNameStrings[NUM_EDITOR_TILES][44] =
@@ -1357,6 +1363,7 @@ int canWearEquip(Entity* entity, int category)
 				case GOATMAN:
 				case KOBOLD:
 				case INSECTOID:
+				case REPTILIAN://jannik323
 					equipType = 3;
 					break;
 
@@ -1993,6 +2000,21 @@ void setSpriteAttributes(Entity* entityNew, Entity* entityToCopy, Entity* entity
 			entityNew->colliderDiggable = 0;
 			entityNew->colliderDamageTypes = 0;
 		}
+	}
+	else if (spriteType == 28)//jannik323
+	{
+	if (entityToCopy != nullptr)
+	{
+		// copy old entity attributes to newly created.
+		entityNew->signalInputDirection = entityToCopy->signalInputDirection;
+		entityNew->signalGateType = entityToCopy->signalGateType;
+	}
+	else
+	{
+		// set default new entity attributes.
+		entityNew->signalInputDirection = 0;
+		entityNew->signalGateType = 0;
+	}//
 	}
 
 	if ( entityToCopy != nullptr )

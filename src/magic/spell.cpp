@@ -75,6 +75,7 @@ spellElement_t spellElement_flutter;
 spellElement_t spellElement_dash;
 spellElement_t spellElement_selfPolymorph;
 spellElement_t spellElement_ghostBolt;
+spellElement_t spellElement_waterBolt;//jannik323
 
 spell_t spell_forcebolt;
 spell_t spell_magicmissile;
@@ -130,6 +131,8 @@ spell_t spell_flutter;
 spell_t spell_dash;
 spell_t spell_polymorph;
 spell_t spell_ghost_bolt;
+spell_t spell_water_bolt;//jannik323
+
 
 bool addSpell(int spell, int player, bool ignoreSkill)
 {
@@ -309,6 +312,9 @@ bool addSpell(int spell, int player, bool ignoreSkill)
 			break;
 		case SPELL_GHOST_BOLT:
 			new_spell = copySpell(&spell_ghost_bolt);
+			break;
+		case SPELL_WATER_BOLT://jannik323
+			new_spell = copySpell(&spell_water_bolt);
 			break;
 		default:
 			return false;
@@ -922,6 +928,9 @@ spell_t* getSpellFromID(int ID)
 		case SPELL_GHOST_BOLT:
 			spell = &spell_ghost_bolt;
 			break;
+		case SPELL_WATER_BOLT://jannik323
+			spell = &spell_water_bolt;
+			break;
 		default:
 			break;
 	}
@@ -1099,6 +1108,9 @@ int getSpellbookFromSpellID(int spellID)
 		case SPELL_GHOST_BOLT:
 			itemType = SPELLBOOK_9;
 			break;
+		case SPELL_WATER_BOLT://jannik323
+			itemType = SPELLBOOK_9;
+			break;
 		default:
 			break;
 	}
@@ -1110,6 +1122,8 @@ int getSpellIDFromSpellbook(int spellbookType)
 {
 	switch (spellbookType )
 	{
+		/*case SPELLBOOK_WATERBOLT:
+			return spell_water_bolt.ID;*/
 		case SPELLBOOK_FORCEBOLT:
 			return spell_forcebolt.ID;
 		case SPELLBOOK_MAGICMISSILE:

@@ -2373,6 +2373,20 @@ void buttonSpriteProperties(button_t* my)
 				strcpy(subtext, "Collider Model Properties:");
 				break;
 			}
+			case 28://jannik323
+				snprintf(spriteProperties[0], 2, "%d", static_cast<int>(selectedEntity[0]->signalInputDirection));
+				snprintf(spriteProperties[1], 2, "%d", static_cast<int>(selectedEntity[0]->signalGateType));
+				inputstr = spriteProperties[0];
+				cursorflash = ticks;
+				menuVisible = 0;
+				subwindow = 1;
+				newwindow = 32;
+				subx1 = xres / 2 - 220;
+				subx2 = xres / 2 + 220;
+				suby1 = yres / 2 - 120;
+				suby2 = yres / 2 + 120;
+				strcpy(subtext, "Signal Gate Properties:");
+				break;//
 			default:
 				strcpy(message, "No properties available for current sprite.");
 				messagetime = 60;
@@ -3477,6 +3491,10 @@ void buttonSpritePropertiesConfirm(button_t* my)
 				selectedEntity[0]->colliderMaxHP = (Sint32)atoi(spriteProperties[8]);
 				selectedEntity[0]->colliderDiggable = (Sint32)atoi(spriteProperties[9]);
 				selectedEntity[0]->colliderDamageTypes = (Sint32)atoi(spriteProperties[10]);
+				break;
+			case 28:
+				selectedEntity[0]->signalInputDirection = (Sint32)atoi(spriteProperties[0]);
+				selectedEntity[0]->signalGateType = (Sint32)atoi(spriteProperties[1]);
 				break;
 			default:
 				break;

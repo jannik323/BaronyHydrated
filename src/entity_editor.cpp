@@ -337,6 +337,8 @@ Entity::Entity(Sint32 in_sprite, Uint32 pos, list_t* entlist, list_t* creatureli
 	signalTimerRepeatCount(skill[3]),
 	signalTimerLatchInput(skill[4]),
 	signalInputDirection(skill[5]),
+	signalGateType(skill[6]),//jannik323
+	gate_inputs(skill[7]),//jannik323
 	thrownProjectilePower(skill[19]),
 	thrownProjectileCharge(skill[20]),
 	playerStartDir(skill[1]),

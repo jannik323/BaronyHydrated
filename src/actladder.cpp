@@ -597,6 +597,7 @@ void actWinningPortal(Entity* my)
 	                case RACE_GOATMAN:
 	                case RACE_GOBLIN:
 	                case RACE_INSECTOID:
+					case RACE_REPTILIAN://jannik323
 	                    MainMenu::beginFade(MainMenu::FadeDestination::ClassicEndingBeast);
 	                    break;
 	                case RACE_SKELETON:
@@ -625,6 +626,7 @@ void actWinningPortal(Entity* my)
 	                case RACE_GOATMAN:
 	                case RACE_GOBLIN:
 	                case RACE_INSECTOID:
+					case RACE_REPTILIAN://jannik323
 	                    MainMenu::beginFade(MainMenu::FadeDestination::ClassicBaphometEndingBeast);
 	                    break;
 	                case RACE_SKELETON:
@@ -823,6 +825,7 @@ void Entity::actExpansionEndGamePortal()
                 case RACE_GOATMAN:
                 case RACE_GOBLIN:
                 case RACE_INSECTOID:
+				case RACE_REPTILIAN://jannik323
                     MainMenu::beginFade(MainMenu::FadeDestination::EndingBeast);
                     break;
                 case RACE_SKELETON:
@@ -1033,6 +1036,7 @@ void Entity::actMidGamePortal()
 	                case RACE_GOATMAN:
 	                case RACE_GOBLIN:
 	                case RACE_INSECTOID:
+					case RACE_REPTILIAN://jannik323
 	                    MainMenu::beginFade(MainMenu::FadeDestination::HerxMidpointBeast);
 	                    break;
 	                case RACE_SKELETON:
@@ -1055,6 +1059,7 @@ void Entity::actMidGamePortal()
 	                case RACE_GOATMAN:
 	                case RACE_GOBLIN:
 	                case RACE_INSECTOID:
+					case RACE_REPTILIAN://jannik323
 	                    MainMenu::beginFade(MainMenu::FadeDestination::BaphometMidpointBeast);
 	                    break;
 	                case RACE_SKELETON:
@@ -1081,16 +1086,16 @@ int customPortalLookForMapWithName(char* mapToSearch, bool isSecretLevel, int le
 		return -1000;
 	}
 	std::string mapsDirectory; // store the full file path here.
-	if ( !isSecretLevel )
+	if ( !isSecretLevel)//jannik323
 	{
-		mapsDirectory = PHYSFS_getRealDir(LEVELSFILE);
-		mapsDirectory.append(PHYSFS_getDirSeparator()).append(LEVELSFILE);
+		mapsDirectory = PHYSFS_getRealDir(alternativegenlevel ? ALTLEVELSFILE :LEVELSFILE);
+		mapsDirectory.append(PHYSFS_getDirSeparator()).append(alternativegenlevel ? ALTLEVELSFILE : LEVELSFILE);
 	}
 	else
 	{
-		mapsDirectory = PHYSFS_getRealDir(SECRETLEVELSFILE);
-		mapsDirectory.append(PHYSFS_getDirSeparator()).append(SECRETLEVELSFILE);
-	}
+		mapsDirectory = PHYSFS_getRealDir(alternativegenlevel ? ALTSECRETLEVELSFILE : SECRETLEVELSFILE);
+		mapsDirectory.append(PHYSFS_getDirSeparator()).append(alternativegenlevel ? ALTSECRETLEVELSFILE : SECRETLEVELSFILE);
+	}//
 	printlog("Maps directory: %s", mapsDirectory.c_str());
 	std::vector<std::string> levelsList = getLinesFromDataFile(mapsDirectory);
 	std::string line = levelsList.front();

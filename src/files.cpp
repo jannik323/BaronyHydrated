@@ -1605,7 +1605,7 @@ static ConsoleVariable<float> cvar_hell_ambience("/hell_ambience", hellAmbience)
 -------------------------------------------------------------------------------*/
 
 bool verifyMapHash(const char* filename, int hash, bool *fileExistsInTable) {
-	auto r = strrchr(filename, '/');
+	/*auto r = strrchr(filename, '/');
 	auto it = mapHashes.find(r ? (r + 1) : filename);
 	const int canonical = it != mapHashes.end() ? it->second : -1;
 	if ( fileExistsInTable )
@@ -1615,8 +1615,9 @@ bool verifyMapHash(const char* filename, int hash, bool *fileExistsInTable) {
 	const bool result = it != mapHashes.end() && (canonical == hash || canonical == -1 || hash == -1);
 	if (!result) {
 		printlog("map '%s' failed hash check (%d should be %d)", filename, hash, canonical);
-	}
-	return result;
+	}*/
+	//return result;//j323 for debugging
+	return true;
 }
 
 int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* creatureList, int *checkMapHash)
@@ -2252,6 +2253,10 @@ int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* crea
 						fp->read(&entity->colliderDiggable, sizeof(Sint32), 1);
 						fp->read(&entity->colliderDamageTypes, sizeof(Sint32), 1);
 						break;
+					case 28://jannik323
+						fp->read(&entity->signalInputDirection, sizeof(Sint32), 1);
+						fp->read(&entity->signalGateType, sizeof(Sint32), 1);
+						break;//
 					default:
 						break;
 				}
@@ -2681,6 +2686,10 @@ int saveMap(const char* filename2)
 					fp->write(&entity->colliderDiggable, sizeof(Sint32), 1);
 					fp->write(&entity->colliderDamageTypes, sizeof(Sint32), 1);
 					break;
+				case 28://jannik323
+					fp->write(&entity->signalInputDirection, sizeof(Sint32), 1);
+					fp->write(&entity->signalGateType, sizeof(Sint32), 1);
+					break;//
 				default:
 					break;
 			}
@@ -2851,16 +2860,18 @@ int physfsLoadMapFile(int levelToLoad, Uint32 seed, bool useRandSeed, int* check
 	}
 	else
 	{
-		if ( !secretlevel )
+		if ( !secretlevel )//jannik323
 		{
-			mapsDirectory = PHYSFS_getRealDir(LEVELSFILE);
-			mapsDirectory.append(PHYSFS_getDirSeparator()).append(LEVELSFILE);
+			mapsDirectory = PHYSFS_getRealDir(alternativegenlevel ? ALTLEVELSFILE :LEVELSFILE);
+			mapsDirectory.append(PHYSFS_getDirSeparator()).append(alternativegenlevel ? ALTLEVELSFILE : LEVELSFILE);
 		}
 		else
 		{
-			mapsDirectory = PHYSFS_getRealDir(SECRETLEVELSFILE);
-			mapsDirectory.append(PHYSFS_getDirSeparator()).append(SECRETLEVELSFILE);
+			mapsDirectory = PHYSFS_getRealDir(alternativegenlevel ? ALTSECRETLEVELSFILE : SECRETLEVELSFILE);
+			mapsDirectory.append(PHYSFS_getDirSeparator()).append(alternativegenlevel ? ALTSECRETLEVELSFILE : SECRETLEVELSFILE);
 		}
+		//
+
 		printlog("Maps directory: %s", mapsDirectory.c_str());
 		std::vector<std::string> levelsList = getLinesFromDataFile(mapsDirectory);
 		line = levelsList.front();

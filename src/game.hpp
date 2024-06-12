@@ -101,7 +101,7 @@ extern Uint32 cycles, pingtime;
 extern real_t fps;
 static const int NUMCLASSES = 21;
 #define NUMRACES 13
-#define NUMPLAYABLERACES 9
+#define NUMPLAYABLERACES 10//jannik323
 extern char address[64];
 extern bool loadnextlevel;
 extern int skipLevelsOnLoad;
@@ -110,6 +110,7 @@ extern std::string loadCustomNextMap;
 extern Uint32 forceMapSeed;
 extern int currentlevel;
 extern bool secretlevel;
+extern bool alternativegenlevel;//jannik323
 extern bool darkmap;
 extern int shaking, bobbing;
 
@@ -195,6 +196,7 @@ enum PlayerRaces : int
 	RACE_INCUBUS,
 	RACE_GOBLIN,
 	RACE_INSECTOID,
+	RACE_REPTILIAN,//jannik323
 	RACE_RAT,
 	RACE_TROLL,
 	RACE_SPIDER,
@@ -299,6 +301,7 @@ void actExpansionEndGamePortal(Entity* my);
 void actSoundSource(Entity* my);
 void actLightSource(Entity* my);
 void actSignalTimer(Entity* my);
+void actSignalGate(Entity* my);//jannik323
 
 void startMessages();
 bool frameRateLimit(Uint32 maxFrameRate, bool resetAccumulator = true, bool sleep = false);
@@ -347,6 +350,10 @@ extern bool capture_mouse; //Useful for debugging when the game refuses to relea
 
 #define LEVELSFILE "maps/levels.txt"
 #define SECRETLEVELSFILE "maps/secretlevels.txt"
+//jannik323
+#define ALTLEVELSFILE "maps/alt/levels.txt"
+#define ALTSECRETLEVELSFILE "maps/alt/secretlevels.txt"
+//
 #define LENGTH_OF_LEVEL_REGION 5
 
 #define TICKS_PER_SECOND 50

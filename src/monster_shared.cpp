@@ -119,6 +119,7 @@ void Entity::initMonster(int mySprite)
 			monsterSpellAnimation = MONSTER_SPELLCAST_NONE;
 			break;
 		case GOBLIN:
+		case REPTILIAN://jannik323
 			monsterFootstepType = MONSTER_FOOTSTEP_USE_BOOTS;
 			monsterSpellAnimation = MONSTER_SPELLCAST_HUMANOID;
 			break;

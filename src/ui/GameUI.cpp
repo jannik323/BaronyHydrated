@@ -4992,7 +4992,8 @@ bool StatusEffectQueue_t::insertEffect(int effectID, int spellID)
 		|| effectID == kEffectBread 
 		|| effectID == kEffectBloodHunger
 		|| effectID == kEffectAutomatonHunger
-		|| effectID >= kSpellEffectOffset )
+		|| effectID >= kSpellEffectOffset
+		|| effectID == kEffectReptilianWater)//jannik323
 	{
 		if ( StatusEffectDefinitions_t::effectDefinitionExists(effectID) )
 		{
@@ -5410,7 +5411,7 @@ int StatusEffectQueue_t::getBaseEffectPosY()
 int StatusEffectQueueEntry_t::getEffectSpriteNormalWidth()
 {
 	if ( effect == StatusEffectQueue_t::kEffectBread
-		|| effect == StatusEffectQueue_t::kEffectBloodHunger )
+		|| effect == StatusEffectQueue_t::kEffectBloodHunger)
 	{
 		return 76;
 	}
@@ -5418,12 +5419,16 @@ int StatusEffectQueueEntry_t::getEffectSpriteNormalWidth()
 	{
 		return 64;
 	}
+	else if (effect == StatusEffectQueue_t::kEffectReptilianWater)//jannik323
+	{
+		return 52;
+	}//
 	return 32;
 }
 int StatusEffectQueueEntry_t::getEffectSpriteNormalHeight()
 {
 	if ( effect == StatusEffectQueue_t::kEffectBread
-		|| effect == StatusEffectQueue_t::kEffectBloodHunger )
+		|| effect == StatusEffectQueue_t::kEffectBloodHunger)
 	{
 		return 60;
 	}
@@ -5431,6 +5436,10 @@ int StatusEffectQueueEntry_t::getEffectSpriteNormalHeight()
 	{
 		return 64;
 	}
+	else if (effect == StatusEffectQueue_t::kEffectReptilianWater)//jannik323
+	{
+		return 72;
+	}//
 	return 32;
 }
 
@@ -5448,7 +5457,8 @@ real_t StatusEffectQueueEntry_t::getStatusEffectLargestScaling(int player)
 {
 	if ( effect == StatusEffectQueue_t::kEffectBread 
 		|| effect == StatusEffectQueue_t::kEffectBloodHunger 
-		|| effect == StatusEffectQueue_t::kEffectAutomatonHunger )
+		|| effect == StatusEffectQueue_t::kEffectAutomatonHunger
+		|| effect == StatusEffectQueue_t::kEffectReptilianWater)//jannik323
 	{
 		return 2.0;
 	}
@@ -5459,7 +5469,8 @@ real_t StatusEffectQueueEntry_t::getStatusEffectMidScaling(int player)
 {
 	if ( effect == StatusEffectQueue_t::kEffectBread 
 		|| effect == StatusEffectQueue_t::kEffectBloodHunger
-		|| effect == StatusEffectQueue_t::kEffectAutomatonHunger )
+		|| effect == StatusEffectQueue_t::kEffectAutomatonHunger
+		|| effect == StatusEffectQueue_t::kEffectReptilianWater)//jannik323
 	{
 		return 1.5;
 	}
@@ -6506,7 +6517,7 @@ bool StatusEffectQueue_t::doStatusEffectTooltip(StatusEffectQueueEntry_t& entry,
 					}
 				}
 				else if ( effectID == StatusEffectQueue_t::kEffectBread
-					|| effectID == StatusEffectQueue_t::kEffectBloodHunger )
+					|| effectID == StatusEffectQueue_t::kEffectBloodHunger)
 				{
 					if ( entry.customVariable >= getEntityHungerInterval(player, nullptr, stats[player], HUNGER_INTERVAL_OVERSATIATED) )
 					{
@@ -6524,7 +6535,26 @@ bool StatusEffectQueue_t::doStatusEffectTooltip(StatusEffectQueueEntry_t& entry,
 					{
 						variation = 1;
 					}
-				}
+				}//jannik323
+				else if (effectID == StatusEffectQueue_t::kEffectReptilianWater)
+				{
+					if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
+					{
+						variation = 0;
+					}
+					else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY))
+					{
+						variation = 3;
+					}
+					else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
+					{
+						variation = 2;
+					}
+					else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
+					{
+						variation = 1;
+					}
+				}//
 				else if ( effectID == StatusEffectQueue_t::kEffectAutomatonHunger )
 				{
 					int nameVariation = 1;
@@ -6699,6 +6729,7 @@ bool StatusEffectQueue_t::doStatusEffectTooltip(StatusEffectQueueEntry_t& entry,
 const int StatusEffectQueue_t::kEffectBread = -2;
 const int StatusEffectQueue_t::kEffectBloodHunger = -3;
 const int StatusEffectQueue_t::kEffectAutomatonHunger = -4;
+const int StatusEffectQueue_t::kEffectReptilianWater = -26;//jannik323
 const int StatusEffectQueue_t::kEffectWanted = -5;
 const int StatusEffectQueue_t::kEffectWantedInShop = -6;
 const int StatusEffectQueue_t::kEffectBurning = -7;
@@ -6728,7 +6759,7 @@ Frame* StatusEffectQueue_t::getStatusEffectFrame()
 }
 
 void StatusEffectQueue_t::handleNavigation(std::map<int, StatusEffectQueueEntry_t*>& grid, 
-	bool& tooltipShowing, const bool hungerEffectInEffectQueue)
+	bool& tooltipShowing, const bool hungerEffectInEffectQueue, const bool waterEffectInEffectQueue)//jannik323
 {
 	if ( !inputs.hasController(player) 
 		|| inputs.getVirtualMouse(player)->draw_cursor 
@@ -7379,6 +7410,7 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 	bool hungerIconActive = (effectSet.find(kEffectBread) != effectSet.end() 
 		|| effectSet.find(kEffectBloodHunger) != effectSet.end()
 		|| effectSet.find(kEffectAutomatonHunger) != effectSet.end());
+	bool waterIconActive = (effectSet.find(kEffectReptilianWater) != effectSet.end());//jannik323
 	if ( !players[player]->entity )
 	{
 		if ( effectSet.find(kEffectBread) != effectSet.end() )
@@ -7393,6 +7425,10 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 		{
 			effectsToSkipAnimThisFrame.push_back(kEffectAutomatonHunger);
 		}
+		if (effectSet.find(kEffectReptilianWater) != effectSet.end())//jannik323
+		{
+			effectsToSkipAnimThisFrame.push_back(kEffectReptilianWater);
+		}//
 	}
 
 	Frame* statusEffectFrame = getStatusEffectFrame();
@@ -7414,6 +7450,12 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 		}
 		movex += 4;
 	}
+	if(waterIconActive) {//jannik323
+		{
+			movex += 52;
+		}
+		movex += 4;
+	}//
 	const int startrowx = movex;
 	int movey = statusEffectFrame->getSize().h - iconSize;
 	const int spacing = 36;
@@ -7554,7 +7596,7 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 							}
 						}
 						else if ( effectID == StatusEffectQueue_t::kEffectBread
-							|| effectID == StatusEffectQueue_t::kEffectBloodHunger )
+							|| effectID == StatusEffectQueue_t::kEffectBloodHunger)
 						{
 							if ( notif.customVariable >= getEntityHungerInterval(player, nullptr, stats[player], HUNGER_INTERVAL_OVERSATIATED) )
 							{
@@ -7572,7 +7614,26 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 							{
 								variation = 1;
 							}
-						}
+						}//jannik323
+						else if (effectID == StatusEffectQueue_t::kEffectReptilianWater)
+						{
+							if (notif.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
+							{
+								variation = 0;
+							}
+							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
+							{
+								variation = 3;
+							}
+							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
+							{
+								variation = 2;
+							}
+							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY))
+							{
+								variation = 1;
+							}
+						}//
 						else if ( effectID == StatusEffectQueue_t::kEffectAutomatonHunger )
 						{
 							if ( notif.customVariable >= getEntityHungerInterval(player, nullptr, stats[player], HUNGER_INTERVAL_AUTOMATON_SUPERHEATED) )
@@ -7722,6 +7783,7 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 	std::map<int, StatusEffectQueueEntry_t*> grid;
 	size_t index = 0;
 	bool hungerEffectInEffectQueue = false;
+	bool waterEffectInEffectQueue = false;//jannik323
 	bool moduleActive = players[player]->GUI.activeModule == Player::GUI_t::MODULE_STATUS_EFFECTS;
 	effectsBoundingBox = SDL_Rect{ 0, 0, 0, 0 };
 	for ( auto it = effectQueue.rbegin(); it != effectQueue.rend(); )
@@ -7788,16 +7850,25 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 		}
 		int animatePosX = movex;
 		int animatePosY = movey;
-		if ( q.effect == kEffectBread || q.effect == kEffectBloodHunger )
+		if ( q.effect == kEffectBread || q.effect == kEffectBloodHunger)
 		{
 			animatePosX = 0;
 			animatePosY = statusEffectFrame->getSize().h - q.getEffectSpriteNormalHeight();
 		}
-		else if ( q.effect == kEffectAutomatonHunger )
+		else if ( q.effect == kEffectAutomatonHunger)
 		{
 			animatePosX = 0;
 			animatePosY = 4 + statusEffectFrame->getSize().h - q.getEffectSpriteNormalHeight();
 		}
+		if (q.effect == kEffectReptilianWater) {//jannik323
+			if (hungerIconActive) {
+				animatePosX = 76;
+			}
+			else {
+				animatePosX = 0;
+			}
+			animatePosY = statusEffectFrame->getSize().h - q.getEffectSpriteNormalHeight();
+		}//
 
 		effectsBoundingBox.y = std::max(effectsBoundingBox.y, animatePosY + q.getEffectSpriteNormalHeight());
 		effectsBoundingBox.w = std::max(effectsBoundingBox.w, animatePosX + q.getEffectSpriteNormalWidth());
@@ -7851,7 +7922,7 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 				frameImg->disabled = true;
 			}
 		}
-		else if ( q.effect == kEffectBread || q.effect == kEffectBloodHunger || q.effect == kEffectAutomatonHunger )
+		else if ( q.effect == kEffectBread || q.effect == kEffectBloodHunger || q.effect == kEffectAutomatonHunger || q.effect == kEffectReptilianWater)
 		{
 			if ( q.effect == kEffectAutomatonHunger )
 			{
@@ -7865,6 +7936,17 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 					}
 				}
 			}
+			else if (q.effect == kEffectReptilianWater)//jannik323
+			{
+				if (q.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
+				{
+					q.lowDuration = true;
+					if (lowDurationFlash)
+					{
+						frameImg->disabled = true;
+					}
+				}
+			}//
 			else
 			{
 				if ( q.customVariable <= getEntityHungerInterval(player, nullptr, stats[player], HUNGER_INTERVAL_WEAK) )
@@ -7923,7 +8005,7 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 
 		q.animate();
 
-		if ( q.effect == kEffectBread || q.effect == kEffectBloodHunger || q.effect == kEffectAutomatonHunger )
+		if ( q.effect == kEffectBread || q.effect == kEffectBloodHunger || q.effect == kEffectAutomatonHunger)
 		{
 			assert(grid.find(0 + 0 * 10000) == grid.end());
 			grid[0 + 0 * 10000] = &q;
@@ -7931,6 +8013,25 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 			hungerEffectInEffectQueue = true;
 			continue; // don't advance position as this is fixed
 		}
+
+		if (q.effect == kEffectReptilianWater)//jannik323
+		{
+			if (hungerEffectInEffectQueue) {
+				assert(grid.find(1 + 0 * 10000) == grid.end());
+				grid[1 + 0 * 10000] = &q;
+
+				waterEffectInEffectQueue = true;
+				continue; // don't advance position as this is fixed
+			}
+			else {
+				assert(grid.find(0 + 0 * 10000) == grid.end());
+				grid[0 + 0 * 10000] = &q;
+
+				waterEffectInEffectQueue = true;
+				continue; // don't advance position as this is fixed
+			}
+			
+		}//
 
 		assert(grid.find(gridx + gridy * 10000) == grid.end());
 		grid[gridx + gridy * 10000] = &q;
@@ -7949,7 +8050,7 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 		}
 	}
 
-	handleNavigation(grid, tooltipShowing, hungerEffectInEffectQueue);
+	handleNavigation(grid, tooltipShowing, hungerEffectInEffectQueue,waterEffectInEffectQueue);//jannik323
 
 	if ( stats[player] && stats[player]->type == AUTOMATON && !automatonHungerFrame->isDisabled() )
 	{
@@ -8008,7 +8109,7 @@ void StatusEffectQueue_t::updateEntryImage(StatusEffectQueueEntry_t& entry, Fram
 	if ( img )
 	{
 		img->path = "";
-		if ( entry.effect == kEffectBread || entry.effect == kEffectBloodHunger )
+		if ( entry.effect == kEffectBread || entry.effect == kEffectBloodHunger)
 		{
 			if ( StatusEffectDefinitions_t::effectDefinitionExists(entry.effect) )
 			{
@@ -8038,7 +8139,37 @@ void StatusEffectQueue_t::updateEntryImage(StatusEffectQueueEntry_t& entry, Fram
 					img->path = "";
 				}
 			}
-		}
+		}else if (entry.effect == kEffectReptilianWater)//jannik323
+		{
+			if (StatusEffectDefinitions_t::effectDefinitionExists(entry.effect))
+			{
+				int variation = -1;
+				if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
+				{
+					variation = 0;
+				}
+				else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY))
+				{
+					variation = 3;
+				}
+				else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
+				{
+					variation = 2;
+				}
+				else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
+				{
+					variation = 1;
+				}
+				if (variation >= 0)
+				{
+					img->path = StatusEffectDefinitions_t::getEffectImgPath(StatusEffectDefinitions_t::getEffect(entry.effect), variation);
+				}
+				else
+				{
+					img->path = "";
+				}
+			}
+		}//
 		else if ( entry.effect == kEffectAutomatonHunger )
 		{
 			int variation = 1;
@@ -8155,6 +8286,11 @@ void updateStatusEffectQueue(const int player)
 		statusEffectQueue.deleteEffect(StatusEffectQueue_t::kEffectAutomatonHunger);
 	}
 
+	// water icon//jannik323
+	if (stats[player] && stats[player]->type != REPTILIAN) {
+		statusEffectQueue.deleteEffect(StatusEffectQueue_t::kEffectReptilianWater);
+	}
+	//
 	bool effectsEnabled = true;
 	if ( !players[player]->entity && ((multiplayer == SINGLE && splitscreen) || multiplayer != SINGLE) )
 	{
@@ -8165,6 +8301,110 @@ void updateStatusEffectQueue(const int player)
 		effectsEnabled = false;
 	}
 
+	//jannik323
+
+	if (effectsEnabled && stats[player] && stats[player]->type == REPTILIAN
+		&& (stats[player]->WATER <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET)
+			|| stats[player]->WATER >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
+	){
+			const int waterEffectID = StatusEffectQueue_t::kEffectReptilianWater;
+
+			const int WATER_NONE = 1000;
+			const int WATER_OVERSATIATED = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET);
+			const int WATER_HUNGRY = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET);
+			const int WATER_WEAK = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY);
+			const int WATER_STARVING = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY);
+			int waterStateToSet = WATER_NONE;
+			if (stats[player]->WATER >= WATER_OVERSATIATED)
+			{
+				waterStateToSet = WATER_OVERSATIATED;
+			}
+			else if (stats[player]->WATER <= WATER_STARVING)
+			{
+				waterStateToSet = WATER_STARVING;
+			}
+			else if (stats[player]->WATER <= WATER_WEAK)
+			{
+				waterStateToSet = WATER_WEAK;
+			}
+			else if (stats[player]->WATER <= WATER_HUNGRY)
+			{
+				waterStateToSet = WATER_HUNGRY;
+			}
+			StatusEffectQueueEntry_t* entry = nullptr;
+			StatusEffectQueueEntry_t* notif = nullptr;
+
+			for (auto& q : statusEffectQueue.effectQueue)//find old effect element and effect if able
+			{
+				if (q.effect == waterEffectID)
+				{
+					entry = &(q);
+					for (auto& n : statusEffectQueue.notificationQueue)
+					{
+						if (n.effect == waterEffectID)
+						{
+							notif = &(n);
+						}
+						break;
+					}
+					break;
+				}
+			}
+			if (entry && entry->customVariable != waterStateToSet)//only if old was found and is different from current one
+			{
+				if (notif && notif->customVariable != waterStateToSet)
+				{
+					// reset the notification
+					bool erased = false;
+					for (auto it = statusEffectQueue.notificationQueue.begin(); it != statusEffectQueue.notificationQueue.end(); ++it)
+					{
+						if ((*it).effect == waterEffectID)
+						{
+							statusEffectQueue.notificationQueue.erase(it);
+							erased = true;
+							break;
+						}
+					}
+					statusEffectQueue.notificationQueue.push_back(StatusEffectQueueEntry_t(waterEffectID));
+					statusEffectQueue.notificationQueue.back().pos.x = statusEffectQueue.getBaseEffectPosX();
+					statusEffectQueue.notificationQueue.back().pos.y = statusEffectQueue.getBaseEffectPosY();
+
+					// fall back if notificationTargetPosition doesn't have an effect to go to.
+					statusEffectQueue.notificationQueue.back().notificationTargetPosition.x = 0;
+					statusEffectQueue.notificationQueue.back().notificationTargetPosition.y = statusEffectFrame->getSize().h
+						- statusEffectQueue.notificationQueue.back().notificationTargetPosition.h;
+					statusEffectQueue.requiresAnimUpdate = true;
+					entry->customVariable = waterStateToSet;
+					statusEffectQueue.notificationQueue.back().customVariable = waterStateToSet;
+				}
+				else
+				{
+					// else, delete and reapply
+					statusEffectQueue.deleteEffect(waterEffectID);
+					if (statusEffectQueue.insertEffect(waterEffectID, -1))
+					{
+						if (statusEffectQueue.effectQueue.back().effect == waterEffectID)
+						{
+							statusEffectQueue.effectQueue.back().customVariable = waterStateToSet;
+							statusEffectQueue.notificationQueue.back().customVariable = waterStateToSet;
+						}
+					}
+				}
+			}
+			else
+			{
+				// new effect, does not exist
+				if (statusEffectQueue.insertEffect(waterEffectID, -1))
+				{
+					if (statusEffectQueue.effectQueue.back().effect == waterEffectID)
+					{
+						statusEffectQueue.effectQueue.back().customVariable = waterStateToSet;
+						statusEffectQueue.notificationQueue.back().customVariable = waterStateToSet;
+					}
+				}
+			}
+	}
+	//
 	if ( effectsEnabled && stats[player] && stats[player]->type != AUTOMATON
 		&& (svFlags & SV_FLAG_HUNGER) 
 		&& (stats[player]->HUNGER <= getEntityHungerInterval(player, nullptr, stats[player], HUNGER_INTERVAL_HUNGRY) 

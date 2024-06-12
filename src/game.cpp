@@ -2059,6 +2059,18 @@ void gameLogic(void)
 						}
 					}
 
+					if (alternativegenlevel) {//jannik323
+						alternativegenlevel = false;
+						if (currentlevel >= 5 && currentlevel <= 9) {
+							alternativegenlevel = true;
+						}
+					} else {
+						if (currentlevel == 5 && secretlevel) {
+							alternativegenlevel = true;
+						}
+					}
+
+					//
 					if ( multiplayer == SERVER && net_packet && net_packet->data )
 					{
 						for ( c = 1; c < MAXPLAYERS; ++c )

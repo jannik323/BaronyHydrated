@@ -227,6 +227,11 @@ void actHudArm(Entity* my)
 			case RAT:
 				my->sprite = 859;
 				break;
+				//jannik323
+			case REPTILIAN:
+				my->sprite = 1314;
+				break;
+				//
 			default:
 				my->sprite = 634;
 				break;

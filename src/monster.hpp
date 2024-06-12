@@ -58,6 +58,7 @@ enum Monster : int
 	SPELLBOT,
 	GYROBOT,
 	DUMMYBOT,
+	REPTILIAN,//jannik323
 	MAX_MONSTER
 };
 const int NUMMONSTERS = MAX_MONSTER;
@@ -283,6 +284,11 @@ static std::vector<Sint32> monsterSprites[NUMMONSTERS] = {
     {
         889,
     },
+	//jannik323
+	// REPTILIAN
+	{
+		1314,1315,1316,1317,1318,1319,1320,1321,1322,1323
+	},
 };
 
 static char monstertypename[][15] =
@@ -323,7 +329,8 @@ static char monstertypename[][15] =
 	"sentrybot",
 	"spellbot",
 	"gyrobot",
-	"dummybot"
+	"dummybot",
+	"reptilian"//jannik323
 };
 
 static char monstertypenamecapitalized[][15] =
@@ -364,7 +371,8 @@ static char monstertypenamecapitalized[][15] =
 	"Sentrybot",
 	"Spellbot",
 	"Gyrobot",
-	"Dummybot"
+	"Dummybot",
+	"Reptilian"//jannik323
 };
 
 // body part focal points
@@ -412,7 +420,8 @@ static char gibtype[NUMMONSTERS] =
 	0,	//SENTRYBOT
 	0,	//SPELLBOT
 	0,  //GYROBOT
-	0	//DUMMYBOT
+	0,	//DUMMYBOT
+	1	//REPTILIAN //jannik323
 };
 
 // columns go like this:
@@ -456,7 +465,9 @@ static double damagetables[NUMMONSTERS][7] =
 	{ 1.f, 1.f, 1.f, 1.f, 0.5, 0.5, 1.f }, // sentrybot
 	{ 1.f, 1.f, 1.f, 1.f, 0.5, 0.5, 1.f }, // sentrybot
 	{ 1.f, 1.f, 1.f, 1.f, 0.5, 0.5, 1.f }, // gyrobot
-	{ 1.f, 1.f, 1.f, 1.f, 0.5, 1.2, 0.5 }  // dummybot
+	{ 1.f, 1.f, 1.f, 1.f, 0.5, 1.2, 0.5 }, // dummybot
+	{ 0.8, 1.f, 1.2, 1.2, 1.2, 1.2, 0.7 }  // reptilian //jannik323
+
 };
 
 enum DamageTableType : int
@@ -694,6 +705,7 @@ void initSentryBot(Entity* my, Stat* myStats);
 void initGyroBot(Entity* my, Stat* myStats);
 void initDummyBot(Entity* my, Stat* myStats);
 void initMimic(Entity* my, Stat* myStats);
+void initReptilian(Entity* my, Stat* myStats); //jannik323
 
 //--act*Limb functions--
 void actHumanLimb(Entity* my);
@@ -727,6 +739,7 @@ void actSentryBotLimb(Entity* my);
 void actGyroBotLimb(Entity* my);
 void actDummyBotLimb(Entity* my);
 void actMimicLimb(Entity* my);
+void actReptilianLimb(Entity* my);//jannik323
 
 //--*Die functions--
 void humanDie(Entity* my);
@@ -762,6 +775,7 @@ void sentryBotDie(Entity* my);
 void gyroBotDie(Entity* my);
 void dummyBotDie(Entity* my);
 void mimicDie(Entity* my);
+void reptilianDie(Entity* my);//jannik323
 
 //--*MoveBodyparts functions--
 void humanMoveBodyparts(Entity* my, Stat* myStats, double dist);
@@ -797,6 +811,8 @@ void sentryBotAnimate(Entity* my, Stat* myStats, double dist);
 void gyroBotAnimate(Entity* my, Stat* myStats, double dist);
 void dummyBotAnimate(Entity* my, Stat* myStats, double dist);
 void mimicAnimate(Entity* my, Stat* myStats, double dist);
+void reptilianMoveBodyparts(Entity* my, Stat* myStats, double dist);//jannik323
+
 
 //--misc functions--
 void actMinotaurTrap(Entity* my);

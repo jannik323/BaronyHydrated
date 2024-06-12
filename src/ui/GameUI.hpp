@@ -145,6 +145,7 @@ struct StatusEffectQueue_t
 	static const int kEffectBread;
 	static const int kEffectBloodHunger;
 	static const int kEffectAutomatonHunger;
+	static const int kEffectReptilianWater;//jannik323
 	static const int kSpellEffectOffset;
 	static const int kEffectBurning;
 	static const int kEffectWanted;
@@ -195,7 +196,7 @@ struct StatusEffectQueue_t
 	void createStatusEffectTooltip();
 	Frame* getStatusEffectFrame();
 	void handleNavigation(std::map<int, StatusEffectQueueEntry_t*>& grid, 
-		bool& tooltipShowing, const bool hungerEffectInEffectQueue);
+		bool& tooltipShowing, const bool hungerEffectInEffectQueue, const bool waterEffectInEffectQueue);//jannik323
 	void resetQueue()
 	{
 		requiresAnimUpdate = true;

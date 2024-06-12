@@ -122,6 +122,7 @@ score_t* scoreConstructor(int player)
 	score->stats->LVL = stats[player]->LVL;
 	score->stats->GOLD = stats[player]->GOLD;
 	score->stats->HUNGER = stats[player]->HUNGER;
+	score->stats->WATER = stats[player]->WATER;//jannik323
 	for ( int c = 0; c < NUMPROFICIENCIES; c++ )
 	{
 		score->stats->setProficiency(c, stats[player]->getProficiency(c));
@@ -473,6 +474,8 @@ void loadScore(score_t* score)
 	stats[0]->LVL = score->stats->LVL;
 	stats[0]->GOLD = score->stats->GOLD;
 	stats[0]->HUNGER = score->stats->HUNGER;
+	stats[0]->WATER = score->stats->WATER;//jannik323
+
 
 	stats[0]->killer = score->stats->killer;
 	stats[0]->killer_monster = score->stats->killer_monster;
@@ -725,6 +728,7 @@ void saveAllScores(const std::string& scoresfilename)
 		fp->write(&score->stats->LVL, sizeof(Sint32), 1);
 		fp->write(&score->stats->GOLD, sizeof(Sint32), 1);
 		fp->write(&score->stats->HUNGER, sizeof(Sint32), 1);
+		fp->write(&score->stats->WATER, sizeof(Sint32), 1);//jannik323
 		for ( int c = 0; c < NUMPROFICIENCIES; c++ )
 		{
 			auto val = score->stats->getProficiency(c);
@@ -1127,6 +1131,7 @@ void loadAllScores(const std::string& scoresfilename)
 		fp->read(&score->stats->LVL, sizeof(Sint32), 1);
 		fp->read(&score->stats->GOLD, sizeof(Sint32), 1);
 		fp->read(&score->stats->HUNGER, sizeof(Sint32), 1);
+		fp->read(&score->stats->WATER, sizeof(Sint32), 1);//jannik323
 		for ( int c = 0; c < NUMPROFICIENCIES; c++ )
 		{
 			if ( versionNumber < 323 && c >= PRO_UNARMED )
@@ -1610,6 +1615,7 @@ int saveGameOld(int saveIndex)
 		fp->write(&stats[player]->LVL, sizeof(Sint32), 1);
 		fp->write(&stats[player]->GOLD, sizeof(Sint32), 1);
 		fp->write(&stats[player]->HUNGER, sizeof(Sint32), 1);
+		fp->write(&stats[player]->WATER, sizeof(Sint32), 1);//jannik323
 		for ( int c = 0; c < NUMPROFICIENCIES; c++ )
 		{
 			Sint32 val = stats[player]->getProficiency(c);
@@ -1968,6 +1974,7 @@ int saveGameOld(int saveIndex)
 					fp->write(&followerStats->LVL, sizeof(Sint32), 1);
 					fp->write(&followerStats->GOLD, sizeof(Sint32), 1);
 					fp->write(&followerStats->HUNGER, sizeof(Sint32), 1);
+					fp->write(&followerStats->WATER, sizeof(Sint32), 1);//jannik323
 
 					for ( int j = 0; j < NUMPROFICIENCIES; j++ )
 					{
@@ -2621,6 +2628,7 @@ int loadGameOld(int player, int saveIndex)
 	fp->read(&stats[player]->LVL, sizeof(Sint32), 1);
 	fp->read(&stats[player]->GOLD, sizeof(Sint32), 1);
 	fp->read(&stats[player]->HUNGER, sizeof(Sint32), 1);
+	fp->read(&stats[player]->WATER, sizeof(Sint32), 1);//jannik323
 	for ( int c = 0; c < NUMPROFICIENCIES; c++ )
 	{
 		if ( versionNumber < 323 && c >= PRO_UNARMED )
@@ -3037,6 +3045,7 @@ list_t* loadGameFollowersOld(int saveIndex)
 			fp->read(&followerStats->LVL, sizeof(Sint32), 1);
 			fp->read(&followerStats->GOLD, sizeof(Sint32), 1);
 			fp->read(&followerStats->HUNGER, sizeof(Sint32), 1);
+			fp->read(&followerStats->WATER, sizeof(Sint32), 1);//jannik323
 
 			for ( int j = 0; j < NUMPROFICIENCIES; j++ )
 			{
@@ -5619,6 +5628,7 @@ SteamGlobalStatIndexes getIndexForDeathType(int type)
 		case RAT:
 			return STEAM_GSTAT_DEATHS_RAT;
 		case GOBLIN:
+		case REPTILIAN://jannik323
 			return STEAM_GSTAT_DEATHS_GOBLIN;
 		case SLIME:
 			return STEAM_GSTAT_DEATHS_SLIME;
@@ -5764,6 +5774,7 @@ void SaveGameInfo::computeHash(const int playernum, Uint32& hash)
 		hash += (Uint32)((Uint32)stats->LVL << (shift % 32)); ++shift;
 		hash += (Uint32)((Uint32)stats->GOLD << (shift % 32)); ++shift;
 		hash += (Uint32)((Uint32)stats->HUNGER << (shift % 32)); ++shift;
+		hash += (Uint32)((Uint32)stats->WATER << (shift % 32)); ++shift;//jannik323
 
 		for ( auto k : stats->PROFICIENCIES )
 		{
@@ -6024,6 +6035,7 @@ int SaveGameInfo::populateFromSession(const int playernum)
 			player.stats.LVL = stats[c]->LVL;
 			player.stats.GOLD = stats[c]->GOLD;
 			player.stats.HUNGER = stats[c]->HUNGER;
+			player.stats.WATER = stats[c]->WATER;//jannik323
 			player.stats.PROFICIENCIES.resize(NUMPROFICIENCIES);
 			for ( int i = 0; i < NUMPROFICIENCIES; ++i ) {
 				player.stats.PROFICIENCIES[i] = stats[c]->getProficiency(i);
@@ -6163,6 +6175,7 @@ int SaveGameInfo::populateFromSession(const int playernum)
 					stats.LVL = follower->LVL;
 					stats.GOLD = follower->GOLD;
 					stats.HUNGER = follower->HUNGER;
+					stats.WATER = follower->WATER;//jannik323
 					stats.PROFICIENCIES.resize(NUMPROFICIENCIES);
 					for ( int i = 0; i < NUMPROFICIENCIES; ++i ) {
 						stats.PROFICIENCIES[i] = follower->getProficiency(i);
@@ -6690,6 +6703,7 @@ int loadGame(int player, const SaveGameInfo& info) {
 	stats[statsPlayer]->LVL = p.LVL;
 	stats[statsPlayer]->GOLD = p.GOLD;
 	stats[statsPlayer]->HUNGER = p.HUNGER;
+	stats[statsPlayer]->WATER = p.WATER;//jannik323
 	for (int c = 0; c < NUMPROFICIENCIES && c < p.PROFICIENCIES.size(); ++c) {
 		stats[statsPlayer]->setProficiency(c, p.PROFICIENCIES[c]);
 	}
@@ -6968,6 +6982,7 @@ list_t* loadGameFollowers(const SaveGameInfo& info) {
 			stats->LVL = follower.LVL;
 			stats->GOLD = follower.GOLD;
 			stats->HUNGER = follower.HUNGER;
+			stats->WATER = follower.WATER;//jannik323
 			for (int c = 0; c < NUMPROFICIENCIES && c < follower.PROFICIENCIES.size(); ++c) {
 				stats->setProficiency(c, follower.PROFICIENCIES[c]);
 			}
@@ -7101,6 +7116,9 @@ int SaveGameInfo::Player::isCharacterValidFromDLC()
 	{
 		return VALID_OK_CHARACTER;
 	}
+	if (this->race == RACE_REPTILIAN) {//jannik323
+		return VALID_OK_CHARACTER;
+	}//
 	else if ( this->race > RACE_HUMAN && this->stats.appearance == 1 )
 	{
 		return VALID_OK_CHARACTER; // aesthetic only option.

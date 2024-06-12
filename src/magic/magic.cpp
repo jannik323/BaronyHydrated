@@ -80,6 +80,7 @@ void freeSpells()
 	list_FreeAll(&spell_dash.elements);
 	list_FreeAll(&spell_polymorph.elements);
 	list_FreeAll(&spell_ghost_bolt.elements);
+	list_FreeAll(&spell_water_bolt.elements);//jannik323
 }
 
 void spell_magicMap(int player)
@@ -1286,6 +1287,7 @@ int getCharmMonsterDifficulty(Entity& my, Stat& myStats)
 	case GNOME:
 	case SCARAB:
 	case AUTOMATON:
+	case REPTILIAN://jannik323
 	case SUCCUBUS:
 		difficulty = 1;
 		break;

@@ -115,6 +115,34 @@ void Entity::updateCircuitNeighbors()
 								break;
 						}
 					}
+					else if (powerable->behavior == &::actSignalGate) {//jannik323
+						int x1 = static_cast<int>(this->x / 16);
+						int x2 = static_cast<int>(powerable->x / 16);
+						int y1 = static_cast<int>(this->y / 16);
+						int y2 = static_cast<int>(powerable->y / 16);
+						switch (powerable->signalInputDirection) {
+						case 0: // west
+						case 2: // east
+						{
+							byte inputSide = y1 == y2 + 1 ? 1 : y1 == y2 - 1 ? 2 : 0;
+							if (inputSide > 0) {
+								(circuit_status > 1) ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+							}
+							break;
+						}
+						case 1: // south
+						case 3: // north
+						{
+							byte inputSide = x1 == x2 + 1 ? 1 : x1 == x2 - 1 ? 2 : 0;
+							if (inputSide > 0) {
+								(circuit_status > 1) ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+							}
+							break;
+						}
+						default:
+							break;
+						}
+					}//
 					else
 					{
 						(circuit_status > 1) ? powerable->mechanismPowerOn() : powerable->mechanismPowerOff();
@@ -157,6 +185,24 @@ void Entity::mechanismPowerOff()
 	}
 }
 
+//jannik323
+void Entity::mechanismPowerOnMultipleInput(byte input)//WARNING: doesnt start at 0
+{
+	if (gate_inputs == 0) {
+		gate_inputs += input;
+	}else if (gate_inputs != input) {
+		gate_inputs = 3;//hardcoded max
+	}
+}
+//jannik323
+void Entity::mechanismPowerOffMultipleInput(byte input)//WARNING: doesnt start at 0
+{
+	if (gate_inputs == 3) {//hardcoded max
+		gate_inputs -= input;
+	} else if (gate_inputs != 3-input) {
+		gate_inputs = 0;
+	}
+}
 
 
 
@@ -619,6 +665,35 @@ void Entity::toggleSwitch(int skillIndexForPower)
 							default:
 								break;
 						}
+
+					}//jannik323
+					else if (powerable->behavior == &::actSignalGate) {
+						int x1 = static_cast<int>(this->x / 16);
+						int x2 = static_cast<int>(powerable->x / 16);
+						int y1 = static_cast<int>(this->y / 16);
+						int y2 = static_cast<int>(powerable->y / 16);
+						switch (powerable->signalInputDirection) {
+						case 0: // west
+						case 2: // east
+						{
+							byte inputSide = y1 == y2 + 1 ? 1 : y1 == y2 - 1 ? 2 : 0;
+							if (inputSide > 0) {
+								switchPower ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+							}
+							break;
+						}
+						case 1: // south
+						case 3: // north
+						{
+							byte inputSide = x1 == x2 + 1 ? 1 : x1 == x2 - 1 ? 2 : 0;
+							if (inputSide > 0) {
+								switchPower ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+							}
+							break;
+						}//
+						default:
+							break;
+						}
 					}
 					else
 					{
@@ -689,6 +764,34 @@ void Entity::switchUpdateNeighbors()
 									break;
 								default:
 									break;
+							}
+						}//jannik323
+						else if (powerable->behavior == &::actSignalGate) {
+							int x1 = static_cast<int>(this->x / 16);
+							int x2 = static_cast<int>(powerable->x / 16);
+							int y1 = static_cast<int>(this->y / 16);
+							int y2 = static_cast<int>(powerable->y / 16);
+							switch (powerable->signalInputDirection) {
+							case 0: // west
+							case 2: // east
+							{
+								byte inputSide = y1 == y2 + 1 ? 1 : y1 == y2 - 1 ? 2 : 0;
+								if (inputSide > 0) {
+									powerable->mechanismPowerOnMultipleInput(inputSide);
+								}
+								break;
+							}
+							case 1: // south
+							case 3: // north
+							{
+								byte inputSide = x1 == x2 + 1 ? 1 : x1 == x2 - 1 ? 2 : 0;
+								if (inputSide > 0) {
+									powerable->mechanismPowerOnMultipleInput(inputSide);
+								}
+								break;
+							}//
+							default:
+								break;
 							}
 						}
 						else
@@ -844,6 +947,8 @@ void Entity::actSoundSource()
 	}
 #endif // SOUND
 }
+
+
 
 #define SIGNALTIMER_DELAYCOUNT skill[6]
 #define SIGNALTIMER_TIMERCOUNT skill[7]
@@ -1018,6 +1123,34 @@ void Entity::actSignalTimer()
 									default:
 										break;
 								}
+							}//jannik323
+							else if (powerable->behavior == &::actSignalGate) {
+								int x1 = static_cast<int>(this->x / 16);
+								int x2 = static_cast<int>(powerable->x / 16);
+								int y1 = static_cast<int>(this->y / 16);
+								int y2 = static_cast<int>(powerable->y / 16);
+								switch (powerable->signalInputDirection) {
+								case 0: // west
+								case 2: // east
+								{
+									byte inputSide = y1 == y2 + 1 ? 1 : y1 == y2 - 1 ? 2 : 0;
+									if (inputSide > 0) {
+										(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+									}
+									break;
+								}
+								case 1: // south
+								case 3: // north
+								{
+									byte inputSide = x1 == x2 + 1 ? 1 : x1 == x2 - 1 ? 2 : 0;
+									if (inputSide > 0) {
+										(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+									}
+									break;
+								}//
+								default:
+									break;
+								}
 							}
 							else
 							{
@@ -1032,3 +1165,157 @@ void Entity::actSignalTimer()
 		}
 	}
 }
+//jannik323
+void actSignalGate(Entity* my)
+{
+	if (!my)
+	{
+		return;
+	}
+
+	my->actSignalGate();
+}
+//jannik323
+void Entity::actSignalGate()
+{
+	if (multiplayer == CLIENT)
+	{
+		return;
+	}
+
+	int tx = x / 16;
+	int ty = y / 16;
+	list_t* neighbors = nullptr;
+	bool updateNeighbors = false;
+
+	bool newSwitchPower = false;
+	switch (signalGateType) {
+		case 0://OR
+			newSwitchPower = gate_inputs > 0;
+			break;
+		case 1://AND
+			newSwitchPower = gate_inputs == 3;
+			break;
+		case 2://NOT
+			newSwitchPower = gate_inputs == 0;
+			break;
+	}
+
+	if (newSwitchPower)
+	{
+		if (switch_power == SWITCH_UNPOWERED)
+		{
+			switch_power = SWITCH_POWERED;
+			updateNeighbors = true;
+		}
+	}
+	else
+	{
+		if (switch_power == SWITCH_POWERED)
+		{
+			switch_power = SWITCH_UNPOWERED;
+			updateNeighbors = true;
+		}
+	}
+
+	if (updateNeighbors)
+	{
+		switch (signalInputDirection)
+		{
+		case 0: //west
+			getPowerablesOnTile(tx +1, ty, &neighbors);
+			break;
+		case 2: //east
+			getPowerablesOnTile(tx -1, ty, &neighbors);
+			break;
+		case 1: //south
+			getPowerablesOnTile(tx, ty +1, &neighbors);//IDK WHY THIS STILL FLIPPED??
+			break;
+		case 3: //north
+			getPowerablesOnTile(tx, ty -1, &neighbors);
+			break;
+		}
+		if (neighbors == nullptr)return;
+
+		node_t* node = nullptr;
+		for (node = neighbors->first; node != nullptr; node = node->next)
+		{
+			if (!node->element)continue;
+			Entity* powerable = (Entity*)(node->element);
+			if (!powerable)continue;
+
+			if (powerable->behavior == actCircuit)
+			{
+				(switch_power == SWITCH_POWERED) ? powerable->circuitPowerOn() : powerable->circuitPowerOff();
+			}
+			else
+			{
+				if (powerable->behavior == &::actSignalTimer)
+				{
+					switch (powerable->signalInputDirection)
+					{
+					case 0: // west
+						if (static_cast<int>(this->x / 16) == static_cast<int>((powerable->x / 16) - 1))
+						{
+							(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOn() : powerable->mechanismPowerOff();
+						}
+						break;
+					case 1: // south
+						if (static_cast<int>(this->y / 16) == static_cast<int>((powerable->y / 16) - 1))
+						{
+							(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOn() : powerable->mechanismPowerOff();
+						}
+						break;
+					case 2: // east
+						if (static_cast<int>(this->x / 16) == static_cast<int>((powerable->x / 16) + 1))
+						{
+							(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOn() : powerable->mechanismPowerOff();
+						}
+						break;
+					case 3: // north
+						if (static_cast<int>(this->y / 16) == static_cast<int>((powerable->y / 16) + 1))
+						{
+							(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOn() : powerable->mechanismPowerOff();
+						}
+						break;
+					default:
+						break;
+					}
+				}
+				else if (powerable->behavior == &::actSignalGate) {
+					int x1 = static_cast<int>(this->x / 16);
+					int x2 = static_cast<int>(powerable->x / 16);
+					int y1 = static_cast<int>(this->y / 16);
+					int y2 = static_cast<int>(powerable->y / 16);
+					switch (powerable->signalInputDirection) {
+						case 0: // west
+						case 2: // east
+						{
+							byte inputSide = y1 == y2 + 1 ? 1 : y1 == y2 - 1 ? 2 : 0;
+							if (inputSide > 0) {
+								(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+							}
+							break;
+						}
+						case 1: // south
+						case 3: // north
+						{
+							byte inputSide = x1 == x2 + 1 ? 1 : x1 == x2 - 1 ? 2 : 0;
+							if (inputSide > 0) {
+								(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOnMultipleInput(inputSide) : powerable->mechanismPowerOffMultipleInput(inputSide);
+							}
+							break;
+						}
+						default:
+							break;
+					}
+				} else {
+					(switch_power == SWITCH_POWERED) ? powerable->mechanismPowerOn() : powerable->mechanismPowerOff();
+				}
+			}
+		}
+		list_FreeAll(neighbors); //Free the list.
+		free(neighbors);
+	}
+}
+

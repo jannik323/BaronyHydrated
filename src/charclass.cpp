@@ -2866,6 +2866,15 @@ void initClass(const int player)
 		{
 			addSpell(SPELL_SALVAGE, player, true);
 		}
+		else if (stats[player]->playerRace == RACE_REPTILIAN && stats[player]->appearance == 0)//jannik323
+		{
+			addSpell(SPELL_WATER_BOLT, player, true);
+
+			item = newItem(POTION_WATER, EXCELLENT, 0, 5, 2, true, nullptr);
+			item2 = itemPickup(player, item);
+			free(item);
+		}
+		//
 
 		if ( stats[player]->getProficiency(PRO_ALCHEMY) >= 0 )
 		{

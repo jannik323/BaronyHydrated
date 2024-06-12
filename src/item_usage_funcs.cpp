@@ -111,7 +111,10 @@ bool item_PotionWater(Item*& item, Entity* entity, Entity* usedBy)
 				}
 				playSoundEntity(entity, 52, 64);
 			}
-		}
+			if (stats->type = REPTILIAN) {//jannik323
+				stats->WATER += 200;
+			}
+		}//
 		else
 		{
 			if ( stats->type == VAMPIRE )
@@ -131,6 +134,9 @@ bool item_PotionWater(Item*& item, Entity* entity, Entity* usedBy)
 			else
 			{
 				playSoundEntity(entity, 52, 64);
+			}
+			if (stats->type = REPTILIAN) {//jannik323
+				stats->WATER += 150;
 			}
 		}
 		if ( player >= 0 && player < MAXPLAYERS )
@@ -466,6 +472,8 @@ bool item_PotionBooze(Item*& item, Entity* entity, Entity* usedBy, bool shouldCo
 		if ( stats->type == GOATMAN )
 		{
 			stats->EFFECTS_TIMERS[EFF_DRUNK] = std::max(item->potionGetEffectDurationRandom(entity, stats), stats->EFFECTS_TIMERS[EFF_DRUNK]);
+		}else if (stats->type = REPTILIAN) {//jannik323
+			stats->WATER += 50;//jannik323
 		}
 		else if ( stats->type != GOATMAN )
 		{
@@ -727,6 +735,9 @@ bool item_PotionJuice(Item*& item, Entity* entity, Entity* usedBy)
 	{
 		serverUpdateHunger(player);
 	}
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 70;
+	}//
 
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
@@ -832,6 +843,10 @@ bool item_PotionSickness(Item*& item, Entity* entity, Entity* usedBy)
 	{
 		stats->EFFECTS_TIMERS[EFF_POISONED] = TICKS_PER_SECOND * 15;
 	}
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
+
 	playSoundEntity(entity, 28, 64);
 	serverUpdateEffects(player);
 
@@ -932,6 +947,9 @@ bool item_PotionConfusion(Item*& item, Entity* entity, Entity* usedBy)
 			Uint32 color = makeColorRGB(255, 0, 0);
 			messagePlayerMonsterEvent(usedBy->skill[2], color, *stats, Language::get(4320), Language::get(4321), MSG_COMBAT);
 		}
+	}
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
 	}
 
 	// play drink sound
@@ -1061,6 +1079,9 @@ bool item_PotionCureAilment(Item*& item, Entity* entity, Entity* usedBy)
 		stats->EFFECTS_TIMERS[EFF_HP_REGEN] += item->potionGetEffectDurationRandom(entity, stats);
 		stats->EFFECTS_TIMERS[EFF_MP_REGEN] += stats->EFFECTS_TIMERS[EFF_HP_REGEN];
 	}
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 
 	serverUpdateEffects(player);
 
@@ -1141,6 +1162,9 @@ bool item_PotionBlindness(Item*& item, Entity* entity, Entity* usedBy)
 			entity->monsterReleaseAttackTarget();
 		}
 		messagePlayer(player, MESSAGE_HINT, Language::get(765));
+	}
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
 	}
 
 	// play drink sound
@@ -1234,6 +1258,10 @@ bool item_PotionInvisibility(Item*& item, Entity* entity, Entity* usedBy)
 
 	serverUpdateEffects(player);
 
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
+
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
 	consumeItem(item, player);
@@ -1313,6 +1341,10 @@ bool item_PotionLevitation(Item*& item, Entity* entity, Entity* usedBy)
 		stats->EFFECTS_TIMERS[EFF_LEVITATING] = item->potionGetEffectDurationRandom(entity, stats);
 	}
 	serverUpdateEffects(player);
+
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
@@ -1413,6 +1445,10 @@ bool item_PotionSpeed(Item*& item, Entity* entity, Entity* usedBy)
 	}
 	serverUpdateEffects(player);
 
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
+
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
 	consumeItem(item, player);
@@ -1499,6 +1535,10 @@ bool item_PotionStrength(Item*& item, Entity* entity, Entity* usedBy)
 		stats->EFFECTS_TIMERS[EFF_POTION_STR] = item->potionGetEffectDurationRandom(entity, stats);
 	}
 	serverUpdateEffects(player);
+
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
@@ -1593,6 +1633,10 @@ bool item_PotionAcid(Item*& item, Entity* entity, Entity* usedBy)
 	// set obituary
 	entity->setObituary(Language::get(1535));
     stats->killer = KilledBy::FUNNY_POTION;
+
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 100;
+	}
 
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
@@ -1833,6 +1877,10 @@ bool item_PotionParalysis(Item*& item, Entity* entity, Entity* usedBy)
 	entity->setEffect(EFF_PARALYZED, true, effectDuration, false);
 	serverUpdateEffects(player);
 
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
+
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
 	consumeItem(item, player);
@@ -1979,6 +2027,9 @@ bool item_PotionHealing(Item*& item, Entity* entity, Entity* usedBy, bool should
 		}
 	}
 	serverUpdateEffects(player);
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 	if ( shouldConsumeItem )
 	{
 		consumeItem(item, player);
@@ -2126,6 +2177,9 @@ bool item_PotionExtraHealing(Item*& item, Entity* entity, Entity* usedBy, bool s
 		}
 	}
 	serverUpdateEffects(player);
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 	if ( shouldConsumeItem )
 	{
 		consumeItem(item, player);
@@ -2254,6 +2308,9 @@ bool item_PotionRestoreMagic(Item*& item, Entity* entity, Entity* usedBy)
 
 	// play drink sound
 	playSoundEntity(entity, 52, 64);
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 
 	consumeItem(item, player);
 	return true;
@@ -2334,6 +2391,9 @@ Entity* item_PotionPolymorph(Item*& item, Entity* entity, Entity* usedBy)
 	}
 
 	consumeItem(item, player);
+	if (stats->type = REPTILIAN) {//jannik323
+		stats->WATER += 50;
+	}
 
 	return transformedEntity;
 }

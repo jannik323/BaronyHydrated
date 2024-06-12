@@ -877,8 +877,16 @@ void Item::applyEmptyPotion(int player, Entity& entity)
 				}
 			}
 			else if ( entity.skill[0] > 1 )
-			{
-				--entity.skill[0];
+			{//jannik323
+				if (stats[player] && (stats[player]->type == REPTILIAN || (stats[player]->playerRace == RACE_REPTILIAN && stats[player]->appearance == 0))){
+					if (rng.rand() % 1 == 0) {// 50/50 chance to use it up
+						--entity.skill[0];
+					}
+				}
+				else {
+					--entity.skill[0];
+				}
+				//
 				// Randomly choose second usage stats.
 				int effect = rng.rand() % 10; //4 possible effects.
 				switch ( effect )

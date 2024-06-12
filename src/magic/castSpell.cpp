@@ -164,6 +164,12 @@ void castSpellInit(Uint32 caster_uid, spell_t* spell, bool usingSpellbook)
 		return;
 	}
 
+	if (spell->ID == SPELL_WATER_BOLT) {//jannik323
+		if (stat->WATER <= 0) {
+			return;
+		}
+	}//
+
 	// Calculate the cost of the Spell for Singleplayer
 	if ( spell->ID == SPELL_FORCEBOLT && skillCapstoneUnlocked(player, PRO_SPELLCASTING) )
 	{
@@ -418,6 +424,10 @@ Entity* castSpell(Uint32 caster_uid, spell_t* spell, bool using_magicstaff, bool
 			newbie = isSpellcasterBeginnerFromSpellbook(player, caster, stat, spell, stat->shield);
 		}
 
+		if (spell->ID == SPELL_WATER_BOLT) {//jannik323
+			stat->WATER -= 25;
+		}
+		//
 		/*magiccost = getCostOfSpell(spell);
 		if (magiccost < 0) {
 			if (player >= 0)
@@ -2438,6 +2448,13 @@ Entity* castSpell(Uint32 caster_uid, spell_t* spell, bool using_magicstaff, bool
 					missileEntity->sprite = 171;
 				}
 			}
+			else if (!strcmp(element->element_internal_name, spellElement_waterBolt.element_internal_name))//jannik323
+			{
+			if (propulsion == PROPULSION_MISSILE)
+			{
+				missileEntity->sprite = 172;
+			}
+			}//
 		}
 	}
 

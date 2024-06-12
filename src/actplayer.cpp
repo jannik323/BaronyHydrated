@@ -39,6 +39,7 @@ bool usecamerasmoothing = false;
 bool disablemouserotationlimit = true;
 bool settings_disablemouserotationlimit = false;
 bool swimDebuffMessageHasPlayed = false;
+bool swimbuffMessageHasPlayed = false;//jannik323
 bool partymode = false;
 static ConsoleVariable<float> cvar_calloutStartZ("/callout_start_z", -2.5);
 static ConsoleVariable<float> cvar_calloutMoveTo("/callout_moveto_z", 0.1);
@@ -3422,9 +3423,18 @@ void Player::PlayerMovement_t::handlePlayerMovement(bool useRefreshRateDelta)
 	{
 		PLAYER_VELX *= (((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f;
 		PLAYER_VELY *= (((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f;
+		//jannik323
+		if (stats[PLAYER_NUM]->type == REPTILIAN){
 
-		if ( stats[PLAYER_NUM]->type == SKELETON )
-		{
+			if (!swimbuffMessageHasPlayed){
+				messagePlayer(PLAYER_NUM, MESSAGE_HINT, "You feel right at home in the water!");
+				swimbuffMessageHasPlayed = true;
+			}
+			// swim good
+			PLAYER_VELX *= 1.2;
+			PLAYER_VELY *= 1.2;
+		}else if ( stats[PLAYER_NUM]->type == SKELETON )
+		{//
 			if ( !swimDebuffMessageHasPlayed )
 			{
 				messagePlayer(PLAYER_NUM, MESSAGE_HINT, Language::get(3182));
@@ -3433,7 +3443,7 @@ void Player::PlayerMovement_t::handlePlayerMovement(bool useRefreshRateDelta)
 			// no swim good
 			PLAYER_VELX *= 0.5;
 			PLAYER_VELY *= 0.5;
-		}
+		}		
 	}
 }
 
@@ -4287,6 +4297,9 @@ int playerHeadSprite(Monster race, sex_t sex, int appearance, int frame) {
     else if (race == GOBLIN) {
         return sex == FEMALE ? 752 : 694;
     }
+	else if (race == REPTILIAN) {//jannik323
+		return 1318;
+	}//
     else if (race == INCUBUS) {
         return 702;
     }
@@ -6070,6 +6083,7 @@ void actPlayer(Entity* my)
 				case INCUBUS:
 				case SUCCUBUS:
 				case TROLL:
+				case REPTILIAN://jannik323
 					my->z = 1.5;
 					break;
 				default:
@@ -6358,7 +6372,26 @@ void actPlayer(Entity* my)
 							serverUpdateHunger(PLAYER_NUM);
 						}
 					}
-				}
+					else if (stats[PLAYER_NUM]->type == REPTILIAN)//jannik323
+					{
+						if (ticks % 50 == 0) // Water heals and wets every 50 ticks
+						{
+							if (stats[PLAYER_NUM]->HP < stats[PLAYER_NUM]->MAXHP) {
+								my->modHP(1 + local_rng.rand() % 1);
+								stats[PLAYER_NUM]->HUNGER -= 25;
+								stats[PLAYER_NUM]->HUNGER = std::max(stats[PLAYER_NUM]->HUNGER, 0);
+								serverUpdateHunger(PLAYER_NUM);
+							}
+							if (stats[PLAYER_NUM]->WATER < 400) {
+								if (stats[PLAYER_NUM]->WATER < 90) {
+									stats[PLAYER_NUM]->WATER = 90;
+								}
+								stats[PLAYER_NUM]->WATER += 20;
+								//serverUpdateWater(PLAYER_NUM);
+							}
+						}
+					}
+				}//
 				else if ( ticks % 10 == 0 ) // Lava deals damage every 10 ticks
 				{
 					int damage = (2 + local_rng.rand() % 2);
@@ -6374,7 +6407,14 @@ void actPlayer(Entity* my)
 							stats[PLAYER_NUM]->HUNGER = std::min(1500, stats[PLAYER_NUM]->HUNGER);
 							serverUpdateHunger(PLAYER_NUM);
 						}
-					}
+					}else if (stats[PLAYER_NUM]->type == REPTILIAN){//jannik323
+						if (stats[PLAYER_NUM]->WATER!=0)
+						{
+							stats[PLAYER_NUM]->WATER = 0;
+							messagePlayer(PLAYER_NUM, MESSAGE_STATUS, "The lava drains all moisture inside of you!");
+							//serverUpdateWater(PLAYER_NUM);
+						}
+					}//
 					my->setObituary(Language::get(1506)); // "goes for a swim in some lava."
 					stats[PLAYER_NUM]->killer = KilledBy::LAVA;
 					if ( !my->flags[BURNING] )
@@ -8097,6 +8137,10 @@ void actPlayer(Entity* my)
 				{
 					entity->z += 0.25;
 				}
+				else if (playerRace == REPTILIAN) {//jannik323
+				
+				}
+				//
 			}
 
 			if ( bodypart > 12 )
@@ -9208,7 +9252,7 @@ void actPlayer(Entity* my)
 							entity->focaly = limbs[playerRace][8][1] - 0.25;
 							entity->focalz = limbs[playerRace][8][2] - 0.5;
 						}
-						else if ( playerRace == GOATMAN || playerRace == INSECTOID || playerRace == GOBLIN )
+						else if ( playerRace == GOATMAN || playerRace == INSECTOID || playerRace == GOBLIN || playerRace == REPTILIAN)//jannik323
 						{
 							entity->focaly = limbs[playerRace][8][1] - 0.25;
 							entity->focalz = limbs[playerRace][8][2] - 0.5;
@@ -9358,6 +9402,8 @@ void actPlayer(Entity* my)
 									entity->focalx -= .5;
 									entity->focalz -= .05;
 									break;
+								case REPTILIAN ://jannik323
+									break;//
 								default:
 									break;
 							}
@@ -9380,6 +9426,8 @@ void actPlayer(Entity* my)
 								case SKELETON:
 									// no change.
 									break;
+								case REPTILIAN://jannik323
+									break;//
 								default:
 									break;
 							}
@@ -10083,6 +10131,9 @@ Monster getMonsterFromPlayerRace(int playerRace)
 		case RACE_IMP:
 			return CREATURE_IMP;
 			break;
+		case RACE_REPTILIAN://jannik323
+			return REPTILIAN;
+			break;//
 		default:
 			return HUMAN;
 			break;
@@ -10142,6 +10193,9 @@ void Entity::setDefaultPlayerModel(int playernum, Monster playerRace, int limbTy
 						this->sprite = 695;
 					}
 					break;
+				case REPTILIAN://jannik323
+					this->sprite = 1321;
+					break;//
 				case CREATURE_IMP:
 					this->sprite = 828;
 					break;
@@ -10226,6 +10280,9 @@ void Entity::setDefaultPlayerModel(int playernum, Monster playerRace, int limbTy
 						this->sprite = 701;
 					}
 					break;
+				case REPTILIAN://jannik323
+					this->sprite = 1320;
+					break;//
 				case CREATURE_IMP:
 					this->sprite = 830;
 					break;
@@ -10303,6 +10360,9 @@ void Entity::setDefaultPlayerModel(int playernum, Monster playerRace, int limbTy
 						this->sprite = 700;
 					}
 					break;
+				case REPTILIAN://jannik323
+					this->sprite = 1319;
+					break;//
 				case CREATURE_IMP:
 					this->sprite = 829;
 					break;
@@ -10373,6 +10433,9 @@ void Entity::setDefaultPlayerModel(int playernum, Monster playerRace, int limbTy
 				case GOBLIN:
 					this->sprite = 697;
 					break;
+				case REPTILIAN://jannik323
+					this->sprite = 1316;
+					break;//
 				case CREATURE_IMP:
 					this->sprite = 832;
 					break;
@@ -10436,6 +10499,9 @@ void Entity::setDefaultPlayerModel(int playernum, Monster playerRace, int limbTy
 				case GOBLIN:
 					this->sprite = 696;
 					break;
+				case REPTILIAN://jannik323
+					this->sprite = 1314;
+					break;//
 				case CREATURE_IMP:
 					this->sprite = 831;
 					break;

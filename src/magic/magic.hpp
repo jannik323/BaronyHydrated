@@ -74,7 +74,8 @@ static const int SPELL_SELF_POLYMORPH = 52;
 static const int SPELL_CRAB_FORM = 53;
 static const int SPELL_CRAB_WEB = 54;
 static const int SPELL_GHOST_BOLT = 55;
-static const int NUM_SPELLS = 56;
+static const int SPELL_WATER_BOLT = 56;//jannik323
+static const int NUM_SPELLS = 57;//jannik323
 
 
 #define SPELLELEMENT_CONFUSE_BASE_DURATION 2//In seconds.
@@ -400,6 +401,7 @@ extern spellElement_t spellElement_flutter;
 extern spellElement_t spellElement_dash;
 extern spellElement_t spellElement_selfPolymorph;
 extern spellElement_t spellElement_ghostBolt;
+extern spellElement_t spellElement_waterBolt;//jannik323
 /*
  */
 //TODO: Differentiate between touch spells, enchantment spells, personal spells, ranged spells, area of effect spells, close blast/burst spells, and enemy/ally target spells.
@@ -494,6 +496,7 @@ extern spell_t spell_flutter;
 extern spell_t spell_dash;
 extern spell_t spell_polymorph;
 extern spell_t spell_ghost_bolt;
+extern spell_t spell_water_bolt;//jannik323
 //TODO: Armor/protection/warding spells.
 //TODO: Targeting method?
 

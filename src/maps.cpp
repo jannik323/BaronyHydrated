@@ -130,6 +130,7 @@ int monsterCurve(int level)
 			case 4:
 				return GOBLIN;
 			case 5:
+				return REPTILIAN;//jannik323
 			case 6:
 			case 7:
 				return SLIME;
@@ -138,6 +139,27 @@ int monsterCurve(int level)
 				return GHOUL;
 		}
 	}
+	else if ( !strncmp(map.name, "The Sewers", 10) )     // the sewers //jannik323
+	{
+		switch ( map_rng.rand() % 10 )
+		{
+			case 0:
+				return SPIDER;
+			case 1:
+			case 2:
+			case 3:
+				return REPTILIAN;
+			case 4:
+			case 5:
+				return GOBLIN;
+			case 6:
+			case 7:
+				return SLIME;
+			case 8:
+			case 9:
+				return RAT;
+		}
+	}//
 	else if ( !strncmp(map.name, "The Labyrinth", 13) )     // sand labyrinth
 	{
 		switch ( map_rng.rand() % 20 )
@@ -1019,7 +1041,12 @@ int generateDungeon(char* levelset, Uint32 seed, std::tuple<int, int, int, int> 
 		}
 		else if ( currentlevel == 7 || currentlevel == 8 )
 		{
-			secretlevelexit = 2;
+			if (alternativegenlevel) {//jannik323
+				secretlevelexit = 7;
+			}
+			else {//
+				secretlevelexit = 2;
+			}
 		}
 		else if ( currentlevel == 11 || currentlevel == 13 )
 		{
@@ -4189,6 +4216,7 @@ void assignActions(map_t* map)
 							stats[numplayers]->HP = stats[numplayers]->MAXHP / 2;
 							stats[numplayers]->MP = stats[numplayers]->MAXMP / 2;
 							stats[numplayers]->HUNGER = 500;
+							stats[numplayers]->WATER = 500;//jannik323
 							for ( int c = 0; c < NUMEFFECTS; ++c )
 							{
 								if ( !(c == EFF_VAMPIRICAURA && stats[numplayers]->EFFECTS_TIMERS[c] == -2)
@@ -6766,7 +6794,8 @@ void assignActions(map_t* map)
 	            case RACE_GOATMAN: victoryType = 3; break;
 	            case RACE_AUTOMATON: victoryType = 4; break;
 	            case RACE_INCUBUS: victoryType = 5; break;
-	            case RACE_GOBLIN: victoryType = 3; break;
+				case RACE_GOBLIN: victoryType = 3; break;
+				case RACE_REPTILIAN: victoryType = 3; break;//jannik323
 	            case RACE_INSECTOID: victoryType = 3; break;
 	            case RACE_RAT: victoryType = 3; break;
 	            case RACE_TROLL: victoryType = 3; break;
@@ -7026,6 +7055,18 @@ void assignActions(map_t* map)
 				}
 				entity->setUID(-3);*/
 				break;
+			case 180://jannik323
+				entity->sizex = 2;
+				entity->sizey = 2;
+				entity->x += 8;
+				entity->y += 8;
+				entity->behavior = &actSignalGate;
+				entity->flags[SPRITE] = true;
+				entity->flags[INVISIBLE] = true;
+				entity->flags[PASSABLE] = true;
+				entity->flags[NOUPDATE] = true;
+				entity->skill[28] = 1; // is a mechanism
+				break;//
             default:
                 break;
 		}

@@ -206,7 +206,8 @@ enum KilledBy {
     FOUNTAIN,
     SINK,
     FAILED_ALCHEMY,
-	FAILED_CHALLENGE
+	FAILED_CHALLENGE,
+	DEHYDRATION//jannik323
 };
 
 class Stat
@@ -233,7 +234,7 @@ public:
 	Sint32 MP, MAXMP;
 	Sint32 STR, DEX, CON, INT, PER, CHR;
 	Sint32 EXP, LVL;
-	Sint32 GOLD, HUNGER;
+	Sint32 GOLD, HUNGER, WATER;//jannik323
 	// randomised additional values to add to attributes
 	Sint32 RANDOM_STR, RANDOM_DEX, RANDOM_CON, RANDOM_INT, RANDOM_PER, RANDOM_CHR;
 	Sint32 RANDOM_MAXHP, RANDOM_HP, RANDOM_MAXMP, RANDOM_MP;

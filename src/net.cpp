@@ -4651,6 +4651,7 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 		case RACE_AUTOMATON: victoryType = 4; break;
 		case RACE_INCUBUS: victoryType = 5; break;
 		case RACE_GOBLIN: victoryType = 3; break;
+		case RACE_REPTILIAN: victoryType = 3; break;//jannik323
 		case RACE_INSECTOID: victoryType = 3; break;
 		case RACE_RAT: victoryType = 3; break;
 		case RACE_TROLL: victoryType = 3; break;
@@ -4670,6 +4671,7 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 	        case RACE_GOATMAN:
 	        case RACE_GOBLIN:
 	        case RACE_INSECTOID:
+			case RACE_REPTILIAN://jannik323
 	            MainMenu::beginFade(MainMenu::FadeDestination::EndingBeast);
 	            break;
 	        case RACE_SKELETON:
@@ -4693,6 +4695,7 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 	        case RACE_GOATMAN:
 	        case RACE_GOBLIN:
 	        case RACE_INSECTOID:
+			case RACE_REPTILIAN://jannik323
 	            MainMenu::beginFade(MainMenu::FadeDestination::ClassicEndingBeast);
 	            break;
 	        case RACE_SKELETON:
@@ -4716,6 +4719,7 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 	        case RACE_GOATMAN:
 	        case RACE_GOBLIN:
 	        case RACE_INSECTOID:
+			case RACE_REPTILIAN://jannik323
 	            MainMenu::beginFade(MainMenu::FadeDestination::ClassicBaphometEndingBeast);
 	            break;
 	        case RACE_SKELETON:
@@ -4767,6 +4771,7 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 	        case RACE_GOATMAN:
 	        case RACE_GOBLIN:
 	        case RACE_INSECTOID:
+			case RACE_REPTILIAN://jannik323
 	            MainMenu::beginFade(MainMenu::FadeDestination::HerxMidpointBeast);
 	            break;
 	        case RACE_SKELETON:
@@ -4789,6 +4794,7 @@ static std::unordered_map<Uint32, void(*)()> clientPacketHandlers = {
 	        case RACE_GOATMAN:
 	        case RACE_GOBLIN:
 	        case RACE_INSECTOID:
+			case RACE_REPTILIAN://jannik323
 	            MainMenu::beginFade(MainMenu::FadeDestination::BaphometMidpointBeast);
 	            break;
 	        case RACE_SKELETON:

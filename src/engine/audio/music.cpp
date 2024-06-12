@@ -260,7 +260,7 @@ void handleLevelMusic()
 			}
 			playMusic(minesmusic[currenttrack], false, true, true);
 		}
-		else if ( !strncmp(map.name, "The Swamp", 9) )     // the swamp
+		else if ( !strncmp(map.name, "The Swamp", 9) || !strncmp(map.name, "The Sewers", 10))     // the swamp //jannik323
 		{
 			if ( !playing )
 			{
@@ -511,7 +511,7 @@ void handleLevelMusic()
 		&& strcmp(map.name, "Hell Boss")
 		&& strcmp(map.name, "Sanctum") )
 	{
-		if ( !strncmp(map.name, "The Swamp", 9) || !strncmp(map.name, "The Temple", 10) )   // the swamp
+		if ( !strncmp(map.name, "The Swamp", 9) || !strncmp(map.name, "The Temple", 10) || !strncmp(map.name, "The Sewers", 10))   // the swamp
 		{
 			playMusic(swampmusic[0], true, true, true);
 		}

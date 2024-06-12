@@ -155,7 +155,7 @@ bool gamemods_modPreload = false;
 sex_t lastSex = MALE;
 PlayerRaces lastRace = RACE_HUMAN;
 int lastAppearance = 0;
-bool enabledDLCPack1 = false;
+bool enabledDLCPack1 = false;//j323 change back
 bool enabledDLCPack2 = false;
 bool showRaceInfo = false;
 #ifdef STEAMWORKS
@@ -589,6 +589,11 @@ int isCharacterValidFromDLC(Stat& myStats, int characterClass)
 			break;
 	}
 
+	if (myStats.playerRace == RACE_REPTILIAN)//jannik323
+	{
+		return VALID_OK_CHARACTER;
+	}
+	//
 	return INVALID_CHARACTER;
 }
 
@@ -9522,6 +9527,7 @@ void doEndgame(bool saveHighscore) {
 				case RACE_GOATMAN:
 				case RACE_GOBLIN:
 				case RACE_INSECTOID:
+				case RACE_REPTILIAN://jannik323
 					movieCrawlType = MOVIE_WIN_BEASTS;
 					break;
 				case RACE_HUMAN:

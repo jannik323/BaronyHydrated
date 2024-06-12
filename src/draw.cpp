@@ -2362,7 +2362,7 @@ void drawEntities2D(long camx, long camy)
 					drawImageScaled(itemSprite(tmpItem), nullptr, &pos);
 					free(tmpItem);
 				}
-				else if ( entity->sprite == 133 )
+				else if ( entity->sprite == 133 || entity->sprite == 180)//jannik323
 				{
 					pos.y += sprites[entity->sprite]->h / 2;
 					pos.x += sprites[entity->sprite]->w / 2;

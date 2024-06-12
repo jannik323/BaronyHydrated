@@ -367,6 +367,8 @@ Entity::Entity(Sint32 in_sprite, Uint32 pos, list_t* entlist, list_t* creatureli
 	signalTimerRepeatCount(skill[3]),
 	signalTimerLatchInput(skill[4]),
 	signalInputDirection(skill[5]),
+	signalGateType(skill[6]),//jannik323
+	gate_inputs(skill[7]),//jannik323
 	effectPolymorph(skill[50]),
 	effectShapeshift(skill[53]),
 	entityShowOnMap(skill[59]),
@@ -718,6 +720,9 @@ void Entity::killedByMonsterObituary(Entity* victim)
 			case GOBLIN:
 				victim->setObituary(Language::get(1513));
 				break;
+			case REPTILIAN://jannik323
+				victim->setObituary(Language::get(2167));
+				break;//
 			case SLIME:
 				victim->setObituary(Language::get(1514));
 				break;
@@ -2680,21 +2685,21 @@ bool Entity::safeConsumeMP(int amount)
 	return false;
 }
 
+//jannik323
 /*-------------------------------------------------------------------------------
 
-Entity::handleEffects
+Entity::getWaterTickRate
 
-processes general character status updates for a given entity, such as
-hunger, level ups, poison, etc.
+processes character water status updates for a given entity
 
 -------------------------------------------------------------------------------*/
 
-int Entity::getHungerTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffects)
+int Entity::getWaterTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffects)
 {
-	int hungerTickRate = 30; // how many ticks to reduce hunger by a point.
+	int waterTickRate = 20; // how many ticks to reduce water by a point.
 	if ( !myStats )
 	{
-		return hungerTickRate;
+		return waterTickRate;
 	}
 	int hungerring = 0;
 	if ( checkItemsEffects )
@@ -2722,46 +2727,13 @@ int Entity::getHungerTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffec
 		}
 	}
 
-	int vampiricHunger = 0;
-	if ( checkItemsEffects )
-	{
-		if ( myStats->EFFECTS[EFF_VAMPIRICAURA] )
-		{
-			if ( myStats->EFFECTS_TIMERS[EFF_VAMPIRICAURA] == -2 )
-			{
-				vampiricHunger = 2;
-			}
-			else
-			{
-				vampiricHunger = 1;
-			}
-		}
-	}
-
-	if ( !strncmp(map.name, "Sanctum", 7)
-		|| !strncmp(map.name, "Boss", 4)
-		|| !strncmp(map.name, "Hell Boss", 9)
-		|| !strncmp(map.name, "Mages Guild", 11)
-		|| strstr(map.name, " Transition") )
-	{
-		hungerring = 1; // slow down hunger on boss stages.
-		if ( vampiricHunger > 0 )
-		{
-			vampiricHunger *= 8;
-		}
-	}
-
-	if ( vampiricHunger > 0 )
-	{
-		hungerTickRate = 5 * vampiricHunger;
-	}
 	else if ( hungerring > 0 )
 	{
-		hungerTickRate = 120;
+		waterTickRate = 40;
 	}
 	else if ( hungerring < 0 )
 	{
-		hungerTickRate = 15;
+		waterTickRate = 10;
 	}
 
 	int playerCount = 0;
@@ -2775,25 +2747,123 @@ int Entity::getHungerTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffec
 
 	if ( playerCount == 3 )
 	{
-		hungerTickRate *= 1.25;
+		waterTickRate *= 1.25;
 	}
 	else if ( playerCount == 4 )
 	{
+		waterTickRate *= 1.5;
+	}
+
+	waterTickRate = std::max(waterTickRate, 1);
+	return waterTickRate;
+}
+//
+
+int Entity::getHungerTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffects)
+{
+	int hungerTickRate = 30; // how many ticks to reduce hunger by a point.
+	if (!myStats)
+	{
+		return hungerTickRate;
+	}
+	int hungerring = 0;
+	if (checkItemsEffects)
+	{
+		if (myStats->ring != NULL)
+		{
+			if (myStats->ring->type == RING_SLOWDIGESTION)
+			{
+				if (myStats->ring->beatitude >= 0)
+				{
+					hungerring = 1;
+				}
+				else
+				{
+					if (isPlayer && shouldInvertEquipmentBeatitude(myStats))
+					{
+						hungerring = 1;
+					}
+					else
+					{
+						hungerring = -1;
+					}
+				}
+			}
+		}
+	}
+
+	int vampiricHunger = 0;
+	if (checkItemsEffects)
+	{
+		if (myStats->EFFECTS[EFF_VAMPIRICAURA])
+		{
+			if (myStats->EFFECTS_TIMERS[EFF_VAMPIRICAURA] == -2)
+			{
+				vampiricHunger = 2;
+			}
+			else
+			{
+				vampiricHunger = 1;
+			}
+		}
+	}
+
+	if (!strncmp(map.name, "Sanctum", 7)
+		|| !strncmp(map.name, "Boss", 4)
+		|| !strncmp(map.name, "Hell Boss", 9)
+		|| !strncmp(map.name, "Mages Guild", 11)
+		|| strstr(map.name, " Transition"))
+	{
+		hungerring = 1; // slow down hunger on boss stages.
+		if (vampiricHunger > 0)
+		{
+			vampiricHunger *= 8;
+		}
+	}
+
+	if (vampiricHunger > 0)
+	{
+		hungerTickRate = 5 * vampiricHunger;
+	}
+	else if (hungerring > 0)
+	{
+		hungerTickRate = 120;
+	}
+	else if (hungerring < 0)
+	{
+		hungerTickRate = 15;
+	}
+
+	int playerCount = 0;
+	for (int i = 0; i < MAXPLAYERS; ++i)
+	{
+		if (!client_disconnected[i])
+		{
+			++playerCount;
+		}
+	}
+
+	if (playerCount == 3)
+	{
+		hungerTickRate *= 1.25;
+	}
+	else if (playerCount == 4)
+	{
 		hungerTickRate *= 1.5;
 	}
-	if ( myStats->type == INSECTOID )
+	if (myStats->type == INSECTOID)
 	{
 		hungerTickRate *= 1.5;
 	}
 
-	if ( checkItemsEffects )
+	if (checkItemsEffects)
 	{
-		if ( myStats->mask && myStats->mask->type == MASK_GRASS_SPRIG )
+		if (myStats->mask && myStats->mask->type == MASK_GRASS_SPRIG)
 		{
-			if ( !(isPlayer &&
-				(myStats->type == TROLL || myStats->type == RAT || myStats->type == SPIDER || myStats->type == CREATURE_IMP)) )
+			if (!(isPlayer &&
+				(myStats->type == TROLL || myStats->type == RAT || myStats->type == SPIDER || myStats->type == CREATURE_IMP)))
 			{
-				if ( myStats->mask->beatitude >= 0 || shouldInvertEquipmentBeatitude(myStats) )
+				if (myStats->mask->beatitude >= 0 || shouldInvertEquipmentBeatitude(myStats))
 				{
 					real_t mult = std::min(1.25 + (0.25 * abs(myStats->mask->beatitude)), 2.0);
 					hungerTickRate *= mult;
@@ -2808,19 +2878,19 @@ int Entity::getHungerTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffec
 	}
 
 	bool playerAutomaton = (myStats->type == AUTOMATON && isPlayer);
-	if ( playerAutomaton )
+	if (playerAutomaton)
 	{
 		// give a little extra hunger duration.
-		if ( playerCount == 3 )
+		if (playerCount == 3)
 		{
 			hungerTickRate *= 1.25; // 1.55x (1.25 x 1.25)
 		}
-		else if ( playerCount == 4 )
+		else if (playerCount == 4)
 		{
 			hungerTickRate *= 1.5; // 2.55x (1.5 x 1.5)
 		}
 
-		if ( myStats->HUNGER > 1000 && hungerTickRate > 30 )
+		if (myStats->HUNGER > 1000 && hungerTickRate > 30)
 		{
 			hungerTickRate = 30; // don't slow down during superheated.
 		}
@@ -3309,6 +3379,8 @@ void Entity::handleEffects(Stat* myStats)
 
 	// hunger
 	int hungerTickRate = Entity::getHungerTickRate(myStats, behavior == &actPlayer, true);
+	int waterTickRate = Entity::getWaterTickRate(myStats, behavior == &actPlayer, true);//jannik323
+
 	int vampiricHunger = 0;
 	if ( myStats->EFFECTS[EFF_VAMPIRICAURA] )
 	{
@@ -3580,6 +3652,88 @@ void Entity::handleEffects(Stat* myStats)
 				}
 			}
 		}
+	}//jannik323
+	if (myStats->type == REPTILIAN && player >= 0 && ticks % waterTickRate == 0)
+	{
+		//messagePlayer(player, MESSAGE_STATUS, std::to_string(myStats->WATER).c_str()); //jannik323
+
+	if (myStats->WATER > 0)
+	{
+		myStats->WATER--;
+		Sint32 noLongerFull = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_SUPERWET);
+		Sint32 youFeelHungry = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_WET);
+		Sint32 youFeelWeak = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_DRY);
+		Sint32 youFeelFaint = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_SUPERDRY);
+
+		if (myStats->WATER == noLongerFull)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You are gushingly moist!");
+			//serverUpdateWater(player);
+		}
+		else if (myStats->WATER == youFeelHungry)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You could use some water");
+			//serverUpdateWater(player);
+		}
+		else if (myStats->WATER == youFeelWeak)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You feel dry");
+			//serverUpdateWater(player);
+		}
+		else if (myStats->WATER == youFeelFaint)
+		{
+			messagePlayer(player, MESSAGE_STATUS, "You are almost fully dry");
+			//playSoundPlayer(player, 32, 128);
+			//serverUpdateWater(player);
+		}
+	}
+	else
+	{
+		bool doDrying = true;
+		myStats->WATER = 0;
+
+		// Deal WATER damage every three seconds
+		if (doDrying && ticks % 150 == 0)
+		{
+			//serverUpdateWater(player);
+			if (player >= 0) // Only Players can starve
+			{
+				this->modHP(-5);
+
+				if (myStats->HP <= 0)
+				{
+					myStats->killer = KilledBy::DEHYDRATION;
+					this->setObituary("dried out in the sun");
+				}
+
+				// Give the Player feedback on being hurt
+				playSoundEntity(this, 28, 64); // "Damage.ogg"
+
+				if (myStats->HP > 0)
+				{
+					messagePlayer(player, MESSAGE_STATUS, Language::get(633));
+				}
+
+				// Shake the Host's screen
+				if (player >= 0 && players[player]->isLocalPlayer())
+				{
+					camera_shakex += .1;
+					camera_shakey += 10;
+				}
+				else if (player > 0 && multiplayer == SERVER && !players[player]->isLocalPlayer())
+				{
+					// Shake the Client's screen
+					strcpy((char*)net_packet->data, "SHAK");
+					net_packet->data[4] = 10; // turns into .1
+					net_packet->data[5] = 10;
+					net_packet->address.host = net_clients[player - 1].host;
+					net_packet->address.port = net_clients[player - 1].port;
+					net_packet->len = 6;
+					sendPacketSafe(net_sock, -1, net_packet, player - 1);
+				}
+			}
+		}
+	}//
 	}
 
 	if ( myStats->mask && myStats->mask->type == MASK_PIPE )
@@ -3740,7 +3894,10 @@ void Entity::handleEffects(Stat* myStats)
 						myStats->EFFECTS_TIMERS[EFF_VOMITING] = 1;
 					}
 				}
-			}
+				if (myStats->type == REPTILIAN) {//jannik323
+					myStats->WATER -= 25;
+				}
+			}//
 			serverSpawnGibForClient(entity);
 		}
 	}
@@ -4888,6 +5045,7 @@ void Entity::handleEffects(Stat* myStats)
 
 					steamAchievementClient(player, "BARONY_ACH_BORN_AGAIN");
 					myStats->HUNGER = 800;
+					myStats->WATER = 800;//jannik323
 					if ( myStats->MAXHP < 10 )
 					{
 						myStats->MAXHP = 10;
@@ -5425,8 +5583,22 @@ Sint32 statGetSTR(Stat* entitystats, Entity* my)
 			&& entitystats->HUNGER <= getEntityHungerInterval(-1, my, entitystats, HUNGER_INTERVAL_AUTOMATON_CRITICAL) )
 		{
 			STR--;
+		}//jannik323
+		if (entitystats->type == REPTILIAN) {
+			if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
+			{
+				STR++;
+			}
+			if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_DRY))
+			{
+				STR--;
+			}
+			if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY))
+			{
+				STR--;
+			}
 		}
-	}
+	}//
 	if ( entitystats->gloves != nullptr )
 	{
 		if ( entitystats->gloves->type == GAUNTLETS_STRENGTH )
@@ -5641,6 +5813,20 @@ Sint32 statGetDEX(Stat* entitystats, Entity* my)
 			DEX--;
 		}
 	}
+	if (entitystats->type == REPTILIAN) {//jannik323
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
+		{
+			DEX++;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_DRY))
+		{
+			DEX--;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY))
+		{
+			DEX--;
+		}
+	}//
 
 	if ( entitystats->EFFECTS[EFF_WEBBED] && !entitystats->EFFECTS[EFF_SLOW] )
 	{
@@ -5905,6 +6091,16 @@ Sint32 statGetINT(Stat* entitystats, Entity* my)
 			INT--;
 		}
 	}
+	if (entitystats->type == REPTILIAN) {//jannik323
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
+		{
+			INT++;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY))
+		{
+			INT--;
+		}
+	}//
 	if ( entitystats->helmet != nullptr )
 	{
 		if ( entitystats->helmet->type == HAT_WIZARD )
@@ -6028,7 +6224,17 @@ Sint32 statGetPER(Stat* entitystats, Entity* my)
 		{
 			PER--;
 		}
-	}
+	}//jannik323
+	if (entitystats->type == REPTILIAN) {
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
+		{
+			PER++;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY))
+		{
+			PER--;
+		}
+	}//
 	if ( entitystats->mask )
 	{
 		if ( entitystats->mask->type == TOOL_GLASSES
@@ -6979,6 +7185,9 @@ void Entity::attack(int pose, int charge, Entity* target)
 					// this is mostly used for monsters that "cast" spells
 					switch ( myStats->weapon->type )
 					{
+						/*case SPELLBOOK_WATERBOLT://jannik323
+							castSpell(uid, &spell_water_bolt, true, false);
+							break;*/
 						case SPELLBOOK_FORCEBOLT:
 							if ( myStats->type == SPELLBOT )
 							{
@@ -12607,6 +12816,12 @@ bool Entity::checkEnemy(Entity* your)
 								result = false;
 							}
 							break;
+						case REPTILIAN://jannik323
+							if (yourStats->type == REPTILIAN)
+							{
+								result = false;
+							}
+							break;//
 						case GOATMAN:
 							if ( yourStats->type == GOATMAN )
 							{
@@ -12692,6 +12907,12 @@ bool Entity::checkEnemy(Entity* your)
 								result = false;
 							}
 							break;
+						case REPTILIAN://jannik323
+							if (myStats->type == REPTILIAN)
+							{
+								result = false;
+							}
+							break;//
 						case GOATMAN:
 							if ( myStats->type == GOATMAN )
 							{
@@ -13057,6 +13278,12 @@ bool Entity::checkFriend(Entity* your)
 								result = true;
 							}
 							break;
+						case REPTILIAN://jannik323
+							if (yourStats->type == REPTILIAN)
+							{
+								result = true;
+							}
+							break;//
 						case GOATMAN:
 							if ( yourStats->type == GOATMAN )
 							{
@@ -13146,6 +13373,12 @@ bool Entity::checkFriend(Entity* your)
 								result = true;
 							}
 							break;
+						case REPTILIAN://jannik323
+							if (yourStats->type == REPTILIAN)
+							{
+								result = true;
+							}
+							break;//
 						case GOATMAN:
 							if ( myStats->type == GOATMAN )
 							{
@@ -13740,6 +13973,7 @@ bool Entity::setBootSprite(Entity* leg, int spriteOffset)
 		case VAMPIRE:
 		case SUCCUBUS:
 		case SHOPKEEPER:
+		case REPTILIAN://jannik323
 			if ( myStats->shoes->type == LEATHER_BOOTS || myStats->shoes->type == LEATHER_BOOTS_SPEED )
 			{
 				leg->sprite = 148 + spriteOffset;
@@ -14160,7 +14394,7 @@ int Entity::getAttackPose() const
 				|| myStats->type == HUMAN || myStats->type == GOBLIN
 				|| myStats->type == SKELETON || myStats->type == GNOME
 				|| myStats->type == SUCCUBUS || myStats->type == SHOPKEEPER
-				|| myStats->type == SHADOW )
+				|| myStats->type == SHADOW || myStats->type == REPTILIAN)//jannik323
 			{
 				pose = MONSTER_POSE_MELEE_WINDUP1;
 			}
@@ -14204,7 +14438,7 @@ int Entity::getAttackPose() const
 				|| myStats->type == VAMPIRE || myStats->type == HUMAN
 				|| myStats->type == GOBLIN || myStats->type == SKELETON 
 				|| myStats->type == GNOME || myStats->type == SUCCUBUS
-				|| myStats->type == SPIDER
+				|| myStats->type == SPIDER || myStats->type == REPTILIAN//jannik323
 				|| myStats->type == CRAB
 				|| myStats->type == SHOPKEEPER || myStats->type == SHADOW )
 			{
@@ -14257,7 +14491,7 @@ int Entity::getAttackPose() const
 				|| myStats->type == HUMAN || myStats->type == GOBLIN 
 				|| myStats->type == SKELETON || myStats->type == GNOME
 				|| myStats->type == SUCCUBUS || myStats->type == SHOPKEEPER
-				|| myStats->type == SHADOW )
+				|| myStats->type == SHADOW || myStats->type == REPTILIAN)//jannik323
 			{
 				if ( myStats->weapon->type == CROSSBOW || myStats->weapon->type == HEAVY_CROSSBOW )
 				{
@@ -14299,7 +14533,7 @@ int Entity::getAttackPose() const
 				|| myStats->type == HUMAN || myStats->type == GOBLIN
 				|| myStats->type == SKELETON || myStats->type == GNOME
 				|| myStats->type == SUCCUBUS || myStats->type == SHOPKEEPER
-				|| myStats->type == SHADOW )
+				|| myStats->type == SHADOW || myStats->type == REPTILIAN)//jannik323
 			{
 				if ( getWeaponSkill(myStats->weapon) == PRO_AXE || getWeaponSkill(myStats->weapon) == PRO_MACE
 					|| myStats->weapon->type == TOOL_WHIP )
@@ -14331,7 +14565,7 @@ int Entity::getAttackPose() const
 			type == CREATURE_IMP || type == SUCCUBUS ||
 			type == SHOPKEEPER || type == MINOTAUR ||
 			type == SHADOW || type == RAT || type == SPIDER || type == CRAB ||
-			type == MIMIC ||
+			type == MIMIC || type == REPTILIAN||//jannik323
 			type == SLIME || (type == SCARAB && sprite != 1078 && sprite != 1079))
 		{
 			pose = MONSTER_POSE_MELEE_WINDUP1;
@@ -15315,6 +15549,7 @@ void Entity::handleHumanoidWeaponLimb(Entity* weaponLimb, Entity* weaponArmLimb)
 				case GOATMAN:
 				case INSECTOID:
 				case GOBLIN:
+				case REPTILIAN://jannik323
 					weaponLimb->x += 0.5 * cos(weaponArmLimb->yaw + PI / 2);
 					weaponLimb->y += 0.5 * sin(weaponArmLimb->yaw + PI / 2);
 					break;
@@ -15377,6 +15612,7 @@ void Entity::handleHumanoidWeaponLimb(Entity* weaponLimb, Entity* weaponArmLimb)
 					case INSECTOID:
 					case SUCCUBUS:
 					case INCUBUS:
+					case REPTILIAN://jannik323
 						weaponLimb->x += -.1 * cos(weaponArmLimb->yaw + PI / 2) + 0.25 * cos(weaponArmLimb->yaw);
 						weaponLimb->y += -.1 * sin(weaponArmLimb->yaw + PI / 2) + 0.25 * sin(weaponArmLimb->yaw);
 						weaponLimb->z += -1;
@@ -15424,6 +15660,7 @@ void Entity::handleHumanoidWeaponLimb(Entity* weaponLimb, Entity* weaponArmLimb)
 					case GOBLIN:
 					case GOATMAN:
 					case INSECTOID:
+					case REPTILIAN://jannik323
 						weaponLimb->x += -.1 * cos(weaponArmLimb->yaw + PI / 2) + 0.5 * cos(weaponArmLimb->yaw);
 						weaponLimb->y += -.1 * sin(weaponArmLimb->yaw + PI / 2) + 0.5 * sin(weaponArmLimb->yaw);
 						weaponLimb->z += -1;
@@ -15480,6 +15717,7 @@ void Entity::handleHumanoidWeaponLimb(Entity* weaponLimb, Entity* weaponArmLimb)
 					case GOBLIN:
 					case GOATMAN:
 					case INSECTOID:
+					case REPTILIAN://jannik323
 						weaponLimb->x += -.1 * cos(weaponArmLimb->yaw + PI / 2) + 0.5 * cos(weaponArmLimb->yaw);
 						weaponLimb->y += -.1 * sin(weaponArmLimb->yaw + PI / 2) + 0.5 * sin(weaponArmLimb->yaw);
 						weaponLimb->z += -1;
@@ -15527,6 +15765,7 @@ void Entity::handleHumanoidWeaponLimb(Entity* weaponLimb, Entity* weaponArmLimb)
 				case AUTOMATON:
 				case INSECTOID:
 				case GOBLIN:
+				case REPTILIAN://jannik323
 					weaponLimb->focaly -= 0.05; // minor z-fighting fix.
 					break;
 				default:
@@ -15582,6 +15821,7 @@ void Entity::handleHumanoidWeaponLimb(Entity* weaponLimb, Entity* weaponArmLimb)
 				case GOATMAN:
 				case INSECTOID:
 				case GOBLIN:
+				case REPTILIAN://jannik323
 					weaponLimb->x += 0.5 * cos(weaponArmLimb->yaw + PI / 2);
 					weaponLimb->y += 0.5 * sin(weaponArmLimb->yaw + PI / 2);
 					break;
@@ -16343,6 +16583,7 @@ void Entity::checkGroundForItems()
 		{
 			case GOBLIN:
 			case HUMAN:
+			case REPTILIAN://jannik323
 				if ( !strcmp(myStats->name, "") )
 				{
 					//checkBetterEquipment(myStats);
@@ -16389,6 +16630,8 @@ bool Entity::canWieldItem(const Item& item) const
 			return automatonCanWieldItem(item);
 		case SHADOW:
 			return shadowCanWieldItem(item);
+		case REPTILIAN://jannik323
+			return reptilianCanWieldItem(item);
 		default:
 			return false;
 	}
@@ -16911,6 +17154,12 @@ bool Entity::monsterWantsItem(const Item& item, Item**& shouldEquip, node_t*& re
 
 	switch ( myStats->type )
 	{
+		case REPTILIAN://jannik323
+			if (!reptilianCanWieldItem(item))
+			{
+				return false;
+			}
+		break;//
 		case GOBLIN:
 			if ( !goblinCanWieldItem(item) )
 			{
@@ -19001,6 +19250,7 @@ void Entity::setHelmetLimbOffset(Entity* helm)
 				break;
 			case GOBLIN:
 			case SHADOW:
+			case REPTILIAN://jannik323
 				helm->focalx = limbs[monster][9][0] - .5;
 				helm->focaly = limbs[monster][9][1] - 3.55;
 				helm->focalz = limbs[monster][9][2] + 2.5;
@@ -19118,6 +19368,7 @@ void Entity::setHelmetLimbOffset(Entity* helm)
 				break;
 			case GOBLIN:
 			case SHADOW:
+			case REPTILIAN://jannik323
 				helm->focalx = limbs[monster][9][0] - .5;
 				helm->focaly = limbs[monster][9][1] - 2.75;
 				helm->focalz = limbs[monster][9][2] + 2.5;
@@ -19177,6 +19428,7 @@ void Entity::setHelmetLimbOffset(Entity* helm)
 				helm->focalz = limbs[monster][9][2] + 2.25;
 				break;
 			case GOBLIN:
+			case REPTILIAN://jannik323
 			case SHADOW:
 				helm->focalx = limbs[monster][9][0];
 				helm->focaly = limbs[monster][9][1] - 5;
@@ -19221,6 +19473,7 @@ void Entity::setHelmetLimbOffset(Entity* helm)
 				helm->focalz = limbs[monster][9][2] + 2.25;
 				break;
 			case GOBLIN:
+			case REPTILIAN://jannik323
 			case SHADOW:
 				helm->focalx = limbs[monster][9][0];
 				helm->focaly = limbs[monster][9][1] - 4.5;
@@ -19262,6 +19515,7 @@ void Entity::setHelmetLimbOffset(Entity* helm)
 			case VAMPIRE:
 			case SHOPKEEPER:
 			case HUMAN:
+			case REPTILIAN://jannik323
 				helm->focalx = limbs[monster][10][0] + 0.75;
 				helm->focaly = limbs[monster][10][1] - 0;
 				helm->focalz = limbs[monster][10][2] - 2;
@@ -19995,6 +20249,7 @@ void Entity::setHumanoidLimbOffset(Entity* limb, Monster race, int limbType)
 		case GOBLIN:
 		case GOATMAN:
 		case INSECTOID:
+		case REPTILIAN://jannik323
 			if ( limbType == LIMB_HUMANOID_TORSO )
 			{
 				limb->x -= .25 * cos(this->yaw);
@@ -20432,6 +20687,7 @@ void Entity::handleHumanoidShieldLimb(Entity* shieldLimb, Entity* shieldArmLimb)
 		case INSECTOID:
 		case INCUBUS:
 		case SUCCUBUS:
+		case REPTILIAN://jannik323
 			shieldLimb->x -= 2.5 * cos(this->yaw + PI / 2) + .20 * cos(this->yaw);
 			shieldLimb->y -= 2.5 * sin(this->yaw + PI / 2) + .20 * sin(this->yaw);
 			shieldLimb->z += 2.5;
@@ -20580,7 +20836,7 @@ void Entity::handleHumanoidShieldLimb(Entity* shieldLimb, Entity* shieldArmLimb)
 			shieldLimb->focalx -= .5;
 			shieldLimb->focaly -= 0.7;
 		}
-		else if ( race == GOATMAN || race == GOBLIN || race == INSECTOID )
+		else if ( race == GOATMAN || race == GOBLIN || race == INSECTOID || race == REPTILIAN)//jannik323
 		{
 			shieldLimb->focalz -= 0.5;
 		}
@@ -20820,6 +21076,7 @@ void Entity::setHelmetLimbOffsetWithMask(Entity* helm, Entity* mask)
 			}
 			break;
 		case GOBLIN:
+		case REPTILIAN://jannik323
 			if ( helm->sprite == items[LEATHER_HELM].index
 				|| helm->sprite == items[IRON_HELM].index )
 			{
@@ -21175,7 +21432,24 @@ bool Entity::bEntityHighlightedForPlayer(const int player) const
 	}
 	return false;
 }
-
+//jannik323
+int getEntityWaterInterval(int player, Entity* my, Stat* myStats, EntityWaterIntervals waterInterval){
+	switch (waterInterval)
+	{
+	case WATER_INTERVAL_SUPERWET:
+		return 1000;
+	case WATER_INTERVAL_WET:
+		return 250;
+	case WATER_INTERVAL_DRY:
+		return 150;
+	case WATER_INTERVAL_SUPERDRY:
+		return 50;
+	default:
+		break;
+	}
+	return 1000;
+}
+//
 int getEntityHungerInterval(int player, Entity* my, Stat* myStats, EntityHungerIntervals hungerInterval)
 {
 	bool isInsectoidPlayer = false;

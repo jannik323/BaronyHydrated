@@ -436,6 +436,7 @@ Uint32 forceMapSeed = 0;
 bool loading = false;
 int currentlevel = 0, minotaurlevel = 0;
 bool secretlevel = false;
+bool alternativegenlevel = false;//jannik323
 bool darkmap = false;
 bool skipintro = true;
 bool broadcast = false;
