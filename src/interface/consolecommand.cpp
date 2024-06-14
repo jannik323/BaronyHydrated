@@ -4879,6 +4879,7 @@ namespace ConsoleCommands {
 						case 30: monsterType = TROLL; break;
 						case 35: monsterType = SHOPKEEPER; break;
 						case 36: monsterType = GOBLIN; break;
+						case 181: monsterType = REPTILIAN; break;//jannik323
 						case 48: monsterType = SPIDER; break;
 						case 62: monsterType = LICH; break;
 						case 70: monsterType = GNOME; break;

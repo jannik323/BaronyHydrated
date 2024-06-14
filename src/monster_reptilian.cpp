@@ -1094,7 +1094,8 @@ bool Entity::reptilianCanWieldItem(const Item& item) const
 	{
 	case WEAPON:
 		return true;
-	case ARMOR:
+	case ARMOR://jannik323
+		if (items[item.type].item_slot == EQUIP_ITEM_SLOT_HELM)return false;
 		return true;
 	case MAGICSTAFF:
 		return true;

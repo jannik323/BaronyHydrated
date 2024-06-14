@@ -287,7 +287,7 @@ static std::vector<Sint32> monsterSprites[NUMMONSTERS] = {
 	//jannik323
 	// REPTILIAN
 	{
-		1314,1315,1316,1317,1318,1319,1320,1321,1322,1323
+		1314,1315,1316,1323,1318,1319,1320,1321,1322,1317
 	},
 };
 
@@ -466,7 +466,7 @@ static double damagetables[NUMMONSTERS][7] =
 	{ 1.f, 1.f, 1.f, 1.f, 0.5, 0.5, 1.f }, // sentrybot
 	{ 1.f, 1.f, 1.f, 1.f, 0.5, 0.5, 1.f }, // gyrobot
 	{ 1.f, 1.f, 1.f, 1.f, 0.5, 1.2, 0.5 }, // dummybot
-	{ 0.8, 1.f, 1.2, 1.2, 1.2, 1.2, 0.7 }  // reptilian //jannik323
+	{ 1.2, 0.7, 1.0, 1.5, 1.2, 1.0, 0.5 }  // reptilian //jannik323
 
 };
 

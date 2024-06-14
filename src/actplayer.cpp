@@ -3420,9 +3420,7 @@ void Player::PlayerMovement_t::handlePlayerMovement(bool useRefreshRateDelta)
 	}
 	bool swimming = isPlayerSwimming();
 	if ( swimming && !amuletwaterbreathing )
-	{
-		PLAYER_VELX *= (((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f;
-		PLAYER_VELY *= (((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f;
+	{	
 		//jannik323
 		if (stats[PLAYER_NUM]->type == REPTILIAN){
 
@@ -3431,10 +3429,15 @@ void Player::PlayerMovement_t::handlePlayerMovement(bool useRefreshRateDelta)
 				swimbuffMessageHasPlayed = true;
 			}
 			// swim good
-			PLAYER_VELX *= 1.2;
-			PLAYER_VELY *= 1.2;
-		}else if ( stats[PLAYER_NUM]->type == SKELETON )
-		{//
+			float mult = std::max(0.75f,((((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f)+0.1f);
+			PLAYER_VELX *= mult;
+			PLAYER_VELY *= mult;
+		} else {
+			PLAYER_VELX *= (((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f;
+			PLAYER_VELY *= (((stats[PLAYER_NUM]->getModifiedProficiency(PRO_SWIMMING) / 100.f) * 50.f) + 50) / 100.f;
+		}
+		
+		if ( stats[PLAYER_NUM]->type == SKELETON ){//
 			if ( !swimDebuffMessageHasPlayed )
 			{
 				messagePlayer(PLAYER_NUM, MESSAGE_HINT, Language::get(3182));
@@ -4298,7 +4301,7 @@ int playerHeadSprite(Monster race, sex_t sex, int appearance, int frame) {
         return sex == FEMALE ? 752 : 694;
     }
 	else if (race == REPTILIAN) {//jannik323
-		return 1318;
+		return sex == FEMALE ? 1323 : 1318;
 	}//
     else if (race == INCUBUS) {
         return 702;
@@ -6382,9 +6385,9 @@ void actPlayer(Entity* my)
 								stats[PLAYER_NUM]->HUNGER = std::max(stats[PLAYER_NUM]->HUNGER, 0);
 								serverUpdateHunger(PLAYER_NUM);
 							}
-							if (stats[PLAYER_NUM]->WATER < 400) {
-								if (stats[PLAYER_NUM]->WATER < 90) {
-									stats[PLAYER_NUM]->WATER = 90;
+							if (stats[PLAYER_NUM]->WATER < 350) {
+								if (stats[PLAYER_NUM]->WATER < 80) {
+									stats[PLAYER_NUM]->WATER = 80;
 								}
 								stats[PLAYER_NUM]->WATER += 20;
 								//serverUpdateWater(PLAYER_NUM);
@@ -8863,6 +8866,10 @@ void actPlayer(Entity* my)
 							{
 								entity->sprite += 2;
 							}
+
+							if (playerRace == REPTILIAN && (stats[PLAYER_NUM]->weapon != NULL)) {//jannik323
+								entity->sprite = 1317;
+							}
 						}
 						if ( multiplayer == SERVER )
 						{
@@ -8958,6 +8965,10 @@ void actPlayer(Entity* my)
 								}
 							}
 							entity->sprite += 2 * (bendArm);
+
+							if (playerRace == REPTILIAN && bendArm) {//jannik323
+								entity->sprite = 1315;
+							}
 						}
 						if ( multiplayer == SERVER )
 						{
@@ -9398,11 +9409,10 @@ void actPlayer(Entity* my)
 								case SUCCUBUS:
 									entity->focalx -= .25;
 									break;
+								case REPTILIAN ://jannik323
 								case GOBLIN:
 									entity->focalx -= .5;
 									entity->focalz -= .05;
-									break;
-								case REPTILIAN ://jannik323
 									break;//
 								default:
 									break;
@@ -10194,7 +10204,11 @@ void Entity::setDefaultPlayerModel(int playernum, Monster playerRace, int limbTy
 					}
 					break;
 				case REPTILIAN://jannik323
-					this->sprite = 1321;
+					if (stats[playernum]->sex == FEMALE) {
+						this->sprite = 1322;
+					} else {
+						this->sprite = 1321;
+					}
 					break;//
 				case CREATURE_IMP:
 					this->sprite = 828;

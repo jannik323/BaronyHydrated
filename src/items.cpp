@@ -2228,6 +2228,7 @@ void useItem(Item* item, const int player, Entity* usedBy, bool unequipForDroppi
 		case HAT_HOOD_APPRENTICE:
 		case HAT_HOOD_ASSASSIN:
 		case HAT_HOOD_WHISPERS:
+		case HELL_HELMET://jannik323
 			equipItemResult = equipItem(item, &stats[player]->helmet, player, checkInventorySpaceForPaperDoll);
 			break;
 		case AMULET_SEXCHANGE:
@@ -2838,6 +2839,9 @@ void useItem(Item* item, const int player, Entity* usedBy, bool unequipForDroppi
 	{
 		switch ( item->type )
 		{
+			case HELL_HELMET://jannik323
+				messagePlayer(player, MESSAGE_HINT | MESSAGE_EQUIPMENT, "The helmet feels hot and sturdy.");//jannik323
+				break;
 			case ARTIFACT_BREASTPIECE:
 				messagePlayer(player, MESSAGE_HINT | MESSAGE_EQUIPMENT, Language::get(2972));
 				break;
@@ -4609,6 +4613,9 @@ Sint32 Item::armorGetAC(const Stat* const wielder) const
 	{
 		armor += std::max(1, 1 + (status - 1)); // 1-4
 	}
+	else if (type == HELL_HELMET) {//jannik323
+		armor += std::max(2, 2 + (status - 1)); // 2-5
+	}//
 	else if ( type == ARTIFACT_BOOTS )
 	{
 		armor += std::max(1, 1 + (status - 1)); // 1-4

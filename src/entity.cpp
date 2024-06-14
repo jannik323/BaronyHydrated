@@ -2696,7 +2696,7 @@ processes character water status updates for a given entity
 
 int Entity::getWaterTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffects)
 {
-	int waterTickRate = 20; // how many ticks to reduce water by a point.
+	int waterTickRate = 25; // how many ticks to reduce water by a point.
 	if ( !myStats )
 	{
 		return waterTickRate;
@@ -2729,11 +2729,11 @@ int Entity::getWaterTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffect
 
 	else if ( hungerring > 0 )
 	{
-		waterTickRate = 40;
+		waterTickRate = 35;
 	}
 	else if ( hungerring < 0 )
 	{
-		waterTickRate = 10;
+		waterTickRate = 20;
 	}
 
 	int playerCount = 0;
@@ -2753,6 +2753,13 @@ int Entity::getWaterTickRate(Stat* myStats, bool isPlayer, bool checkItemsEffect
 	{
 		waterTickRate *= 1.5;
 	}
+	//jannik323
+	if (myStats->WATER >= getEntityWaterInterval(-1, NULL, myStats, WATER_INTERVAL_MEGAWET)) {
+		waterTickRate *= 0.75f;
+	}
+	if (myStats->WATER >= getEntityWaterInterval(-1, NULL, myStats, WATER_INTERVAL_SUPERWET)) {
+		waterTickRate *= 0.9f;
+	}//
 
 	waterTickRate = std::max(waterTickRate, 1);
 	return waterTickRate;
@@ -3660,29 +3667,44 @@ void Entity::handleEffects(Stat* myStats)
 	if (myStats->WATER > 0)
 	{
 		myStats->WATER--;
-		Sint32 noLongerFull = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_SUPERWET);
-		Sint32 youFeelHungry = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_WET);
-		Sint32 youFeelWeak = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_DRY);
-		Sint32 youFeelFaint = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_SUPERDRY);
+		Sint32 megaWET = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_MEGAWET);
+		Sint32 superWET = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_SUPERWET);
+		Sint32 justWET = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_WET);
+		Sint32 justDRY= getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_DRY);
+		Sint32 superDRY = getEntityWaterInterval(player, this, myStats, WATER_INTERVAL_SUPERDRY);
 
-		if (myStats->WATER == noLongerFull)
-		{
-			messagePlayer(player, MESSAGE_STATUS, "You are gushingly moist!");
+		if (myStats->WATER == megaWET) {
+			if (!myStats->EFFECTS[EFF_VOMITING]) {
+				messagePlayer(player, MESSAGE_STATUS, "You are gushingly moist!");
+			}
 			//serverUpdateWater(player);
 		}
-		else if (myStats->WATER == youFeelHungry)
+		else if (myStats->WATER == superWET)
 		{
-			messagePlayer(player, MESSAGE_STATUS, "You could use some water");
+			if (!myStats->EFFECTS[EFF_VOMITING]) {
+				messagePlayer(player, MESSAGE_STATUS, "You are very moist!");
+			}
 			//serverUpdateWater(player);
 		}
-		else if (myStats->WATER == youFeelWeak)
+		else if (myStats->WATER == justWET)
 		{
-			messagePlayer(player, MESSAGE_STATUS, "You feel dry");
+			if (!myStats->EFFECTS[EFF_VOMITING]) {
+				messagePlayer(player, MESSAGE_STATUS, "You could use some water");
+			}
 			//serverUpdateWater(player);
 		}
-		else if (myStats->WATER == youFeelFaint)
+		else if (myStats->WATER == justDRY)
 		{
-			messagePlayer(player, MESSAGE_STATUS, "You are almost fully dry");
+			if (!myStats->EFFECTS[EFF_VOMITING]) {
+				messagePlayer(player, MESSAGE_STATUS, "You feel dry");
+			}
+			//serverUpdateWater(player);
+		}
+		else if (myStats->WATER == superDRY)
+		{
+			if (!myStats->EFFECTS[EFF_VOMITING]) {
+				messagePlayer(player, MESSAGE_STATUS, "You are almost fully dry");
+			}
 			//playSoundPlayer(player, 32, 128);
 			//serverUpdateWater(player);
 		}
@@ -3895,7 +3917,7 @@ void Entity::handleEffects(Stat* myStats)
 					}
 				}
 				if (myStats->type == REPTILIAN) {//jannik323
-					myStats->WATER -= 25;
+					myStats->WATER -= 10;
 				}
 			}//
 			serverSpawnGibForClient(entity);
@@ -4910,6 +4932,30 @@ void Entity::handleEffects(Stat* myStats)
 			}
 		}
 	}
+	//jannik323
+	if (myStats->helmet != nullptr && myStats->type == REPTILIAN) {
+		if (ticks % 150 == 0) {
+			if (local_rng.rand() % 25 == 0) {
+				messagePlayer(player, MESSAGE_STATUS, "You struggle to breathe with a helmet on!");
+				this->modHP(-(4 + local_rng.rand() % 3));
+				playSoundEntity(this, 28, 64); // "Damage.ogg"
+				this->setObituary("forgot to breathe."); // choked to death
+				myStats->killer = KilledBy::STRANGULATION;
+				
+				if (player >= 0 && players[player]->isLocalPlayer()) {
+					camera_shakey += 8;
+				} else if (player > 0 && multiplayer == SERVER && !players[player]->isLocalPlayer()) {
+					strcpy((char*)net_packet->data, "SHAK");
+					net_packet->data[4] = 0; // turns into 0
+					net_packet->data[5] = 8;
+					net_packet->address.host = net_clients[player - 1].host;
+					net_packet->address.port = net_clients[player - 1].port;
+					net_packet->len = 6;
+					sendPacketSafe(net_sock, -1, net_packet, player - 1);
+				}
+			}
+		}
+	}//
 
 	// amulet effects
 	if ( myStats->amulet != NULL )
@@ -5045,7 +5091,7 @@ void Entity::handleEffects(Stat* myStats)
 
 					steamAchievementClient(player, "BARONY_ACH_BORN_AGAIN");
 					myStats->HUNGER = 800;
-					myStats->WATER = 800;//jannik323
+					myStats->WATER = 650;//jannik323
 					if ( myStats->MAXHP < 10 )
 					{
 						myStats->MAXHP = 10;
@@ -5583,20 +5629,21 @@ Sint32 statGetSTR(Stat* entitystats, Entity* my)
 			&& entitystats->HUNGER <= getEntityHungerInterval(-1, my, entitystats, HUNGER_INTERVAL_AUTOMATON_CRITICAL) )
 		{
 			STR--;
-		}//jannik323
-		if (entitystats->type == REPTILIAN) {
-			if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
-			{
-				STR++;
-			}
-			if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_DRY))
-			{
-				STR--;
-			}
-			if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY))
-			{
-				STR--;
-			}
+		}
+		
+	}//jannik323
+	if (entitystats->type == REPTILIAN) {
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_MEGAWET)) {
+			STR+=3;
+		}
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET)) {
+			STR++;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_DRY)) {
+			STR--;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY)) {
+			STR--;
 		}
 	}//
 	if ( entitystats->gloves != nullptr )
@@ -5616,6 +5663,12 @@ Sint32 statGetSTR(Stat* entitystats, Entity* my)
 		{
 			STR += (cursedItemIsBuff ? abs(entitystats->helmet->beatitude) : entitystats->helmet->beatitude);
 		}
+		else if (entitystats->helmet->type == HELL_HELMET) {//jannik323
+			if (entitystats->gloves->beatitude >= 0 || cursedItemIsBuff) {
+				STR += 5;
+			}
+			STR += (cursedItemIsBuff ? abs(entitystats->helmet->beatitude) : entitystats->helmet->beatitude);
+		}//
 	}
 	if ( entitystats->ring != nullptr )
 	{
@@ -5814,6 +5867,9 @@ Sint32 statGetDEX(Stat* entitystats, Entity* my)
 		}
 	}
 	if (entitystats->type == REPTILIAN) {//jannik323
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_MEGAWET)) {
+			DEX+=2;
+		}
 		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
 		{
 			DEX++;
@@ -6092,7 +6148,7 @@ Sint32 statGetINT(Stat* entitystats, Entity* my)
 		}
 	}
 	if (entitystats->type == REPTILIAN) {//jannik323
-		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_MEGAWET))
 		{
 			INT++;
 		}
@@ -6226,11 +6282,14 @@ Sint32 statGetPER(Stat* entitystats, Entity* my)
 		}
 	}//jannik323
 	if (entitystats->type == REPTILIAN) {
-		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET))
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_MEGAWET))
 		{
 			PER++;
 		}
-		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERDRY))
+		if (entitystats->WATER >= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_SUPERWET)) {
+			PER++;
+		}
+		if (entitystats->WATER <= getEntityWaterInterval(-1, my, entitystats, WATER_INTERVAL_WET))
 		{
 			PER--;
 		}
@@ -13755,6 +13814,7 @@ int checkEquipType(const Item *item)
 		case HAT_BEAR_HOOD:
 		case HAT_STAG_HOOD:
 		case HAT_WOLF_HOOD:
+		case HELL_HELMET://jannik323
 			return TYPE_HELM;
 			break;
 
@@ -17592,24 +17652,21 @@ Item* Entity::getBestShieldIHave() const
 	return currentBest;
 }
 
-void Entity::degradeArmor(Stat& hitstats, Item& armor, int armornum)
-{
-	if ( hitstats.type == SHADOW )
-	{
+void Entity::degradeArmor(Stat& hitstats, Item& armor, int armornum) {
+	if (hitstats.type == SHADOW) {
 		return; //Shadows' armor and shields don't break.
 	}
 
-	if ( hitstats.type == SKELETON && behavior == &actMonster && monsterAllySummonRank > 0 )
-	{
+	if (hitstats.type == SKELETON && behavior == &actMonster && monsterAllySummonRank > 0) {
 		return; // conjured skeleton armor doesn't break.
 	}
 
-	if ( armor.type == ARTIFACT_BOOTS
+	if (armor.type == ARTIFACT_BOOTS
 		|| armor.type == ARTIFACT_HELM
 		|| armor.type == ARTIFACT_CLOAK
 		|| armor.type == ARTIFACT_GLOVES
 		|| armor.type == ARTIFACT_BREASTPIECE
-		|| armor.type == MASK_ARTIFACT_VISOR )
+		|| armor.type == MASK_ARTIFACT_VISOR || armor.type == HELL_HELMET)//jannik323
 	{
 		return;
 	}
@@ -18580,6 +18637,10 @@ int Entity::getHealthRegenInterval(Entity* my, Stat& myStats, bool isPlayer)
 	{
 		healring = 3;
 	}
+
+	if (isPlayer && myStats.type == REPTILIAN && myStats.WATER >= getEntityWaterInterval(-1, my, &myStats, WATER_INTERVAL_SUPERWET)) {//jannik323
+		healring += 1;
+	}//
 
 	if ( !strncmp(map.name, "Mages Guild", 11) && myStats.type == SHOPKEEPER )
 	{
@@ -21434,19 +21495,20 @@ bool Entity::bEntityHighlightedForPlayer(const int player) const
 }
 //jannik323
 int getEntityWaterInterval(int player, Entity* my, Stat* myStats, EntityWaterIntervals waterInterval){
-	switch (waterInterval)
-	{
-	case WATER_INTERVAL_SUPERWET:
-		return 1000;
-	case WATER_INTERVAL_WET:
-		return 250;
-	case WATER_INTERVAL_DRY:
-		return 150;
-	case WATER_INTERVAL_SUPERDRY:
-		return 50;
-	default:
-		break;
-	}
+	switch (waterInterval) {
+		case WATER_INTERVAL_MEGAWET:
+			return 900;
+		case WATER_INTERVAL_SUPERWET:
+			return 600;
+		case WATER_INTERVAL_WET:
+			return 300;
+		case WATER_INTERVAL_DRY:
+			return 200;
+		case WATER_INTERVAL_SUPERDRY:
+			return 50;
+		default:
+			break;
+		}
 	return 1000;
 }
 //

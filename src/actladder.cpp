@@ -385,7 +385,7 @@ void actPortal(Entity* my)
 					else
 					{
 						// underworld - don't skip on the early sections.
-						if ( currentlevel == 6 || currentlevel == 7 )
+						if ( (currentlevel == 6 || currentlevel == 7) && !alternativegenlevel)//jannik323
 						{
 							skipLevelsOnLoad = -1;
 						}

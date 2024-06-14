@@ -346,7 +346,7 @@ void Stat::clearStats()
 	this->CHR = 0;
 	this->GOLD = 0;
 	this->HUNGER = 1000;
-	this->WATER = 500;//jannik323
+	this->WATER = 650;//jannik323
 	this->LVL = 1;
 	this->EXP = 0;
 	list_FreeAll(&this->FOLLOWERS);

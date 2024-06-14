@@ -9490,6 +9490,7 @@ bool GenericGUIMenu::tinkeringGetItemValue(const Item* item, int* metal, int* ma
 		case ARTIFACT_BOOTS:
 		case ARTIFACT_GLOVES:
 		case MASK_ARTIFACT_VISOR:
+		case HELL_HELMET://jannik323
 			*metal = 8;
 			*magic = 16;
 			break;

@@ -1605,7 +1605,7 @@ static ConsoleVariable<float> cvar_hell_ambience("/hell_ambience", hellAmbience)
 -------------------------------------------------------------------------------*/
 
 bool verifyMapHash(const char* filename, int hash, bool *fileExistsInTable) {
-	/*auto r = strrchr(filename, '/');
+	auto r = strrchr(filename, '/');
 	auto it = mapHashes.find(r ? (r + 1) : filename);
 	const int canonical = it != mapHashes.end() ? it->second : -1;
 	if ( fileExistsInTable )
@@ -1615,9 +1615,9 @@ bool verifyMapHash(const char* filename, int hash, bool *fileExistsInTable) {
 	const bool result = it != mapHashes.end() && (canonical == hash || canonical == -1 || hash == -1);
 	if (!result) {
 		printlog("map '%s' failed hash check (%d should be %d)", filename, hash, canonical);
-	}*/
-	//return result;//j323 for debugging
-	return true;
+	}
+	return result;
+	//return true;
 }
 
 int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* creatureList, int *checkMapHash)

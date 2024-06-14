@@ -497,6 +497,7 @@ char itemNameStrings[NUM_ITEM_STRINGS][32] =
 	"hat_hood_apprentice",
 	"hat_hood_assassin",
 	"hat_hood_whispers",
+	"hell_helmet",//jannik323
 	""
 };
 
@@ -543,6 +544,7 @@ char itemStringsByType[10][NUM_ITEM_STRINGS_BY_TYPE][32] =
 		"hat_hood_apprentice",
 		"hat_hood_assassin",
 		"hat_hood_whispers",
+		"hell_helmet"//jannik323
 		""
 	},
 	{

@@ -1154,7 +1154,7 @@ void actTextSource(Entity* my);
 
 //checks if a sprite falls in certain sprite ranges
 
-static const int NUM_ITEM_STRINGS = 333;
+static const int NUM_ITEM_STRINGS = 334;//jannik323 334
 static const int NUM_ITEM_STRINGS_BY_TYPE = 129;
 static const int NUM_EDITOR_SPRITES = 182;//jannik323
 static const int NUM_EDITOR_TILES = 350;
@@ -1235,6 +1235,7 @@ enum EntityHungerIntervals : int
 int getEntityHungerInterval(int player, Entity* my, Stat* myStats, EntityHungerIntervals hungerInterval);
 enum EntityWaterIntervals : int//jannik323
 {
+	WATER_INTERVAL_MEGAWET,
 	WATER_INTERVAL_SUPERWET,
 	WATER_INTERVAL_WET,
 	WATER_INTERVAL_DRY,

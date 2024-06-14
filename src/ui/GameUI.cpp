@@ -6538,21 +6538,24 @@ bool StatusEffectQueue_t::doStatusEffectTooltip(StatusEffectQueueEntry_t& entry,
 				}//jannik323
 				else if (effectID == StatusEffectQueue_t::kEffectReptilianWater)
 				{
-					if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
-					{
+					if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_MEGAWET)) {
 						variation = 0;
+					}
+					else if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
+					{
+						variation = 1;
 					}
 					else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY))
 					{
-						variation = 3;
+						variation = 4;
 					}
 					else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
 					{
-						variation = 2;
+						variation = 3;
 					}
 					else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
 					{
-						variation = 1;
+						variation = 2;
 					}
 				}//
 				else if ( effectID == StatusEffectQueue_t::kEffectAutomatonHunger )
@@ -7617,21 +7620,24 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 						}//jannik323
 						else if (effectID == StatusEffectQueue_t::kEffectReptilianWater)
 						{
-							if (notif.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
-							{
+							if (notif.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_MEGAWET)) {
 								variation = 0;
 							}
-							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
+							else if (notif.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
 							{
-								variation = 3;
-							}
-							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
-							{
-								variation = 2;
+								variation = 1;
 							}
 							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY))
 							{
-								variation = 1;
+								variation = 4;
+							}
+							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
+							{
+								variation = 3;
+							}
+							else if (notif.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
+							{
+								variation = 2;
 							}
 						}//
 						else if ( effectID == StatusEffectQueue_t::kEffectAutomatonHunger )
@@ -8014,24 +8020,24 @@ void StatusEffectQueue_t::updateAllQueuedEffects()
 			continue; // don't advance position as this is fixed
 		}
 
-		if (q.effect == kEffectReptilianWater)//jannik323
-		{
-			if (hungerEffectInEffectQueue) {
-				assert(grid.find(1 + 0 * 10000) == grid.end());
-				grid[1 + 0 * 10000] = &q;
+		//if (q.effect == kEffectReptilianWater)//jannik323
+		//{
+		//	if (hungerEffectInEffectQueue) {
+		//		assert(grid.find(1 + 0 * 10000) == grid.end());
+		//		grid[1 + 0 * 10000] = &q;
 
-				waterEffectInEffectQueue = true;
-				continue; // don't advance position as this is fixed
-			}
-			else {
-				assert(grid.find(0 + 0 * 10000) == grid.end());
-				grid[0 + 0 * 10000] = &q;
+		//		waterEffectInEffectQueue = true;
+		//		continue; // don't advance position as this is fixed
+		//	}
+		//	else {
+		//		assert(grid.find(0 + 0 * 10000) == grid.end());
+		//		grid[0 + 0 * 10000] = &q;
 
-				waterEffectInEffectQueue = true;
-				continue; // don't advance position as this is fixed
-			}
-			
-		}//
+		//		waterEffectInEffectQueue = true;
+		//		continue; // don't advance position as this is fixed
+		//	}
+		//	
+		//}//
 
 		assert(grid.find(gridx + gridy * 10000) == grid.end());
 		grid[gridx + gridy * 10000] = &q;
@@ -8144,21 +8150,24 @@ void StatusEffectQueue_t::updateEntryImage(StatusEffectQueueEntry_t& entry, Fram
 			if (StatusEffectDefinitions_t::effectDefinitionExists(entry.effect))
 			{
 				int variation = -1;
-				if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
-				{
+				if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_MEGAWET)) {
 					variation = 0;
+				}
+				else if (entry.customVariable >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
+				{
+					variation = 1;
 				}
 				else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY))
 				{
-					variation = 3;
+					variation = 4;
 				}
 				else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY))
 				{
-					variation = 2;
+					variation = 3;
 				}
 				else if (entry.customVariable <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET))
 				{
-					variation = 1;
+					variation = 2;
 				}
 				if (variation >= 0)
 				{
@@ -8303,33 +8312,34 @@ void updateStatusEffectQueue(const int player)
 
 	//jannik323
 
-	if (effectsEnabled && stats[player] && stats[player]->type == REPTILIAN
-		&& (stats[player]->WATER <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET)
-			|| stats[player]->WATER >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET))
-	){
+	if (effectsEnabled && stats[player] && stats[player]->type == REPTILIAN){	
+		if (stats[player]->WATER >= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET) ||
+			stats[player]->WATER <= getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET)) {
+
 			const int waterEffectID = StatusEffectQueue_t::kEffectReptilianWater;
 
 			const int WATER_NONE = 1000;
-			const int WATER_OVERSATIATED = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET);
-			const int WATER_HUNGRY = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET);
-			const int WATER_WEAK = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY);
-			const int WATER_STARVING = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY);
+			const int WATER_MEGAWET = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_MEGAWET);
+			const int WATER_SUPERWET = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERWET);
+			const int WATER_WET = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_WET);
+			const int WATER_DRY = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_DRY);
+			const int WATER_SUPERDRY = getEntityWaterInterval(player, nullptr, stats[player], WATER_INTERVAL_SUPERDRY);
 			int waterStateToSet = WATER_NONE;
-			if (stats[player]->WATER >= WATER_OVERSATIATED)
-			{
-				waterStateToSet = WATER_OVERSATIATED;
+
+			if (stats[player]->WATER >= WATER_MEGAWET){
+				waterStateToSet = WATER_MEGAWET;
 			}
-			else if (stats[player]->WATER <= WATER_STARVING)
-			{
-				waterStateToSet = WATER_STARVING;
+			else if (stats[player]->WATER >= WATER_SUPERWET) {
+				waterStateToSet = WATER_SUPERWET;
 			}
-			else if (stats[player]->WATER <= WATER_WEAK)
-			{
-				waterStateToSet = WATER_WEAK;
+			else if (stats[player]->WATER <= WATER_SUPERDRY){
+				waterStateToSet = WATER_SUPERDRY;
 			}
-			else if (stats[player]->WATER <= WATER_HUNGRY)
-			{
-				waterStateToSet = WATER_HUNGRY;
+			else if (stats[player]->WATER <= WATER_DRY){
+				waterStateToSet = WATER_DRY;
+			}
+			else if (stats[player]->WATER <= WATER_WET){
+				waterStateToSet = WATER_WET;
 			}
 			StatusEffectQueueEntry_t* entry = nullptr;
 			StatusEffectQueueEntry_t* notif = nullptr;
@@ -8403,6 +8413,9 @@ void updateStatusEffectQueue(const int player)
 					}
 				}
 			}
+		} else {
+			statusEffectQueue.deleteEffect(StatusEffectQueue_t::kEffectReptilianWater);
+		}
 	}
 	//
 	if ( effectsEnabled && stats[player] && stats[player]->type != AUTOMATON

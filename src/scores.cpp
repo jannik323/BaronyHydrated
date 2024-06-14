@@ -5897,7 +5897,7 @@ int SaveGameInfo::populateFromSession(const int playernum)
 	}
 
 	info->dungeon_lvl = currentlevel;
-	info->level_track = secretlevel ? 1 : 0;
+	info->level_track = alternativegenlevel ? (secretlevel ? 3 : 2) : (secretlevel ? 1 : 0);//jannik323
 	info->players_connected.resize(MAXPLAYERS);
 	info->players.resize(MAXPLAYERS);
 	for ( int c = 0; c < MAXPLAYERS; ++c ) {
@@ -6586,7 +6586,8 @@ int loadGame(int player, const SaveGameInfo& info) {
 		}
 	}
 	currentlevel = info.dungeon_lvl;
-	secretlevel = info.level_track != 0;
+	secretlevel = info.level_track == 1 || info.level_track == 3;//jannik323
+	alternativegenlevel = info.level_track == 3 || info.level_track == 2;//jannik323
 
 	if ( !info.hiscore_dummy_loading )
 	{

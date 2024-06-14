@@ -243,8 +243,7 @@ Entity* entityClicked(bool* clickedOnGUI, bool clickCheckOverride, int player, E
 				case INSECTOID:
 					sfx = 291 + local_rng.rand() % 4;
 					break;
-				case GOBLIN:
-				case REPTILIAN://jannik323
+				case GOBLIN://jannik323 todo add sound to reptilian maybe
 					sfx = 60 + local_rng.rand() % 3;
 					break;
 				case AUTOMATON:

@@ -68,7 +68,7 @@ Stat::Stat(Sint32 sprite) :
 	this->LVL = 1;
 	this->GOLD = 0;
 	this->HUNGER = 800;
-	this->WATER = 800;//jannik323
+	this->WATER = 650;//jannik323
 
 	//random variables to add to base
 	this->RANDOM_LVL = 0;
@@ -182,7 +182,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->RANDOM_GOLD = 20;
 			stats->GOLD = 40;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->setProficiency(PRO_SWORD, 35);
 			stats->setProficiency(PRO_MACE, 50);
@@ -226,7 +226,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->EXP = 0;
 			stats->LVL = 30;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EFFECTS[EFF_LEVITATING] = true;
@@ -259,7 +259,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 25;
 			stats->GOLD = 100;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
@@ -286,7 +286,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 5;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			break;
@@ -321,7 +321,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 				stats->RANDOM_GOLD = 0;
 			}
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
@@ -363,7 +363,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->GOLD = 300;
 			stats->RANDOM_GOLD = 200;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->FOLLOWERS.first = NULL;
@@ -400,7 +400,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 12;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -448,7 +448,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 				stats->GOLD = 0;
 			}
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
@@ -499,7 +499,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->GOLD = 80;
 			stats->RANDOM_GOLD = 40;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->setProficiency(PRO_SWORD, 75);
@@ -540,7 +540,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 15;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -581,7 +581,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->GOLD = 0;
 			stats->RANDOM_GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -619,7 +619,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->CHR = -3;
 			stats->EXP = 0;
 			stats->LVL = 25;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->GOLD = 50;
@@ -678,7 +678,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->GOLD = 130;
 			stats->RANDOM_GOLD = 70;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			/*stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
@@ -732,7 +732,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->EXP = 0;
 			stats->LVL = 25;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->GOLD = 0;
 			stats->RANDOM_GOLD = 0;
@@ -779,7 +779,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->GOLD = 50;
 			stats->RANDOM_GOLD = 100;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -819,7 +819,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->CHR = -3;
 			stats->EXP = 0;
 			stats->LVL = 25;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
@@ -873,7 +873,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->CHR = -1;
 			stats->EXP = 0;
 			stats->LVL = 25;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			if ( local_rng.rand() % 3 > 0 )
 			{
@@ -931,7 +931,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->EXP = 0;
 			stats->LVL = 20;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->setProficiency(PRO_SWORD, 60);
@@ -964,7 +964,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 50;
 			stats->GOLD = 100;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
 			stats->setProficiency(PRO_RANGED, 100);
@@ -994,7 +994,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 50;
 			stats->GOLD = 100;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
 			stats->setProficiency(PRO_SWORD, 80);
@@ -1021,7 +1021,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 2;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->setProficiency(PRO_SWORD, 35);
@@ -1059,7 +1059,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 20;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -1085,7 +1085,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->CHR = -3;
 			stats->EXP = 0;
 			stats->LVL = 14;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			if ( local_rng.rand() % 10 )
 			{
@@ -1127,7 +1127,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 20;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -1155,7 +1155,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 7;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			break;
 		case 79:
@@ -1190,7 +1190,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->EXP = 0;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			break;
 		case 80:
@@ -1213,7 +1213,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 10;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->setProficiency(PRO_MAGIC, 60);
@@ -1244,7 +1244,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 1;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -1272,7 +1272,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->LVL = 7;
 			stats->GOLD = 0;
 			stats->HUNGER = 900;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_INV_1] = 1;
@@ -1299,7 +1299,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->MAXMP = 50;
 			stats->MP = stats->MAXMP;
 			stats->OLDHP = stats->HP;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->setProficiency(PRO_RANGED, 80);
 			stats->STR = 0;
@@ -1319,7 +1319,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->MAXMP = 10;
 			stats->MP = stats->MAXMP;
 			stats->OLDHP = stats->HP;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->STR = 0;
 			stats->DEX = 0;
@@ -1335,7 +1335,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->HP = 10;
 			stats->HP = stats->MAXHP;
 			stats->OLDHP = stats->HP;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->STR = 0;
 			stats->DEX = 5;
@@ -1356,7 +1356,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->OLDHP = stats->HP;
 			stats->RANDOM_MAXHP = 20;
 			stats->RANDOM_HP = stats->RANDOM_MAXHP;
-			stats->WATER = 900;//jannik323
+			stats->WATER = 650;//jannik323
 
 			stats->STR = 0;
 			stats->DEX = 0;
@@ -1368,6 +1368,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->GOLD = 0;
 			stats->RANDOM_GOLD = 0;
 			break;
+		case 181:
 		case (1000 + REPTILIAN)://jannik323
 			stats->type = REPTILIAN;
 			stats->sex = static_cast<sex_t>(local_rng.rand() % 2);
@@ -1379,7 +1380,7 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 			stats->MP = 20;
 			stats->MAXMP = 20;
 			stats->OLDHP = stats->HP;
-			stats->STR = 5;
+			stats->STR = 6;
 			stats->DEX = 0;
 			stats->CON = 3;
 			stats->INT = -1;
@@ -1398,15 +1399,16 @@ void setDefaultMonsterStats(Stat* stats, int sprite)
 				stats->RANDOM_GOLD = 0;
 			}
 			stats->HUNGER = 900;
-			stats->WATER = 900;
+			stats->WATER = 650;
 
 
 			stats->EDITOR_ITEMS[ITEM_SLOT_WEAPON] = 1;
 			stats->EDITOR_ITEMS[ITEM_SLOT_SHIELD] = 1;
 			stats->EDITOR_ITEMS[ITEM_SLOT_ARMOR] = 1;
-			stats->EDITOR_ITEMS[ITEM_SLOT_HELM] = 1;
+			stats->EDITOR_ITEMS[ITEM_SLOT_HELM] = 0;
 			stats->EDITOR_ITEMS[ITEM_SLOT_CLOAK] = 1;
 			stats->EDITOR_ITEMS[ITEM_SLOT_MASK] = 1;
+
 
 			stats->setProficiency(PRO_SWORD, 35);
 			stats->setProficiency(PRO_MACE, 50);

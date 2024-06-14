@@ -144,18 +144,18 @@ int monsterCurve(int level)
 		switch ( map_rng.rand() % 10 )
 		{
 			case 0:
-				return SPIDER;
 			case 1:
+				return SPIDER;
 			case 2:
 			case 3:
-				return REPTILIAN;
 			case 4:
+				return REPTILIAN;
 			case 5:
-				return GOBLIN;
 			case 6:
+				return GOBLIN;
 			case 7:
-				return SLIME;
 			case 8:
+				return SLIME;
 			case 9:
 				return RAT;
 		}
@@ -4216,7 +4216,7 @@ void assignActions(map_t* map)
 							stats[numplayers]->HP = stats[numplayers]->MAXHP / 2;
 							stats[numplayers]->MP = stats[numplayers]->MAXMP / 2;
 							stats[numplayers]->HUNGER = 500;
-							stats[numplayers]->WATER = 500;//jannik323
+							stats[numplayers]->WATER = 650;//jannik323
 							for ( int c = 0; c < NUMEFFECTS; ++c )
 							{
 								if ( !(c == EFF_VAMPIRICAURA && stats[numplayers]->EFFECTS_TIMERS[c] == -2)
@@ -4827,6 +4827,7 @@ void assignActions(map_t* map)
 			case 164:
 			case 165:
 			case 166:
+			case 181://jannik323
 			{
 				entity->sizex = 4;
 				entity->sizey = 4;
@@ -4853,7 +4854,8 @@ void assignActions(map_t* map)
                 case 27: monsterType = HUMAN; break;
                 case 30: monsterType = TROLL; break;
                 case 35: monsterType = SHOPKEEPER; break;
-                case 36: monsterType = GOBLIN; break;
+				case 36: monsterType = GOBLIN; break;
+				case 181: monsterType = REPTILIAN; break;//jannik323
                 case 48: monsterType = SPIDER; break;
                 case 62: monsterType = LICH; break;
                 case 70: monsterType = GNOME; break;

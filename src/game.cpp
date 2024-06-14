@@ -2061,7 +2061,7 @@ void gameLogic(void)
 
 					if (alternativegenlevel) {//jannik323
 						alternativegenlevel = false;
-						if (currentlevel >= 5 && currentlevel <= 9) {
+						if (currentlevel >= 5 && currentlevel <= 10) {
 							alternativegenlevel = true;
 						}
 					} else {
@@ -2197,7 +2197,7 @@ void gameLogic(void)
 					}
 
 					// (special) unlock temple achievement
-					if ( secretlevel && currentlevel == 8 )
+					if ( secretlevel && currentlevel == 8 && !alternativegenlevel )//jannik323
 					{
 						steamAchievement("BARONY_ACH_TRICKS_AND_TRAPS");
 					}
@@ -2243,12 +2243,12 @@ void gameLogic(void)
 								Player::Minimap_t::mapDetails.push_back(std::make_pair("secret_exit_description", Language::get(713)));
 								break;
 							case 7:
-								messageLocalPlayers(MESSAGE_HINT, Language::get(714));
-								Player::Minimap_t::mapDetails.push_back(std::make_pair("secret_exit_description", Language::get(714)));
+								messageLocalPlayers(MESSAGE_HINT, alternativegenlevel? "You hear the sound of strong water currents." : Language::get(714));//jannik323
+								Player::Minimap_t::mapDetails.push_back(std::make_pair("secret_exit_description", alternativegenlevel ? "You hear the sound of strong water currents." : Language::get(714)));
 								break;
 							case 8:
-								messageLocalPlayers(MESSAGE_HINT, Language::get(715));
-								Player::Minimap_t::mapDetails.push_back(std::make_pair("secret_exit_description", Language::get(715)));
+								messageLocalPlayers(MESSAGE_HINT, alternativegenlevel ? "You hear bones clanking together." : Language::get(715));//jannik323
+								Player::Minimap_t::mapDetails.push_back(std::make_pair("secret_exit_description", alternativegenlevel ? "You hear bones clanking together." : Language::get(715)));
 								break;
 							case 11:
 								messageLocalPlayers(MESSAGE_HINT, Language::get(716));

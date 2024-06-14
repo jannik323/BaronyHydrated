@@ -155,7 +155,7 @@ bool gamemods_modPreload = false;
 sex_t lastSex = MALE;
 PlayerRaces lastRace = RACE_HUMAN;
 int lastAppearance = 0;
-bool enabledDLCPack1 = false;//j323 change back
+bool enabledDLCPack1 = false;
 bool enabledDLCPack2 = false;
 bool showRaceInfo = false;
 #ifdef STEAMWORKS
