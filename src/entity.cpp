@@ -4933,7 +4933,7 @@ void Entity::handleEffects(Stat* myStats)
 		}
 	}
 	//jannik323
-	if (myStats->helmet != nullptr && myStats->type == REPTILIAN) {
+	if (myStats->helmet != nullptr && myStats->type == REPTILIAN && checkEquipType(myStats->helmet) == TYPE_HELM) {
 		if (ticks % 150 == 0) {
 			if (local_rng.rand() % 25 == 0) {
 				messagePlayer(player, MESSAGE_STATUS, "You struggle to breathe with a helmet on!");
