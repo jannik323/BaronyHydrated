@@ -514,6 +514,7 @@ int barony_clear(real_t tx, real_t ty, Entity* my)
 	node_t* node;
 	Entity* entity;
 	bool levitating = false;
+	bool canSwim = false;//jannik323
 // Reworked that function to break the loop in two part. 
 // A first fast one using integer only x/y
 // And the second part that loop on entity and used a global BoundingBox collision detection
@@ -524,6 +525,7 @@ int barony_clear(real_t tx, real_t ty, Entity* my)
 	if ( stats )
 	{
 		levitating = isLevitating(stats);
+		canSwim = stats->type == REPTILIAN;//jannik323
 	}
 	bool isMonster = false;
 	if ( my )
@@ -531,6 +533,8 @@ int barony_clear(real_t tx, real_t ty, Entity* my)
 		if ( my->behavior == &actMonster )
 		{
 			isMonster = true;
+		} else {
+			canSwim = false;//jannik323
 		}
 	}
 	if ( isMonster && multiplayer == CLIENT )
@@ -605,9 +609,8 @@ int barony_clear(real_t tx, real_t ty, Entity* my)
 					return 0;
 				}
 	
-				if ( !levitating && (!map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height] 
-					|| ((swimmingtiles[map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height]] || lavatiles[map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height]])
-						&& isMonster)) )
+				if ( !levitating && (!map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height] || 
+					(((swimmingtiles[map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height]] && !canSwim) || lavatiles[map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height]]) && isMonster)) )//jannik323
 				{
 					// no floor
 					hit.x = x * 16 + 8;
@@ -1697,11 +1700,13 @@ int checkObstacle(long x, long y, Entity* my, Entity* target, bool useTileEntity
 	Entity* entity;
 	Stat* stats;
 	bool levitating = false;
+	bool canSwim = false;//jannik323
 
 	// get levitation status
 	if ( my != NULL && (stats = my->getStats()) != NULL )
 	{
 		levitating = isLevitating(stats);
+		canSwim = stats->type == REPTILIAN && my->behavior == &actMonster;//jannik323
 	}
 	if ( my )
 	{
@@ -1735,8 +1740,8 @@ int checkObstacle(long x, long y, Entity* my, Entity* target, bool useTileEntity
 			}
 			if ( !levitating
 					&& (!map.tiles[index]
-								   || ( (swimmingtiles[map.tiles[index]] || lavatiles[map.tiles[index]])
-										 && isMonster) ) )   // no floor
+								   || ( ((swimmingtiles[map.tiles[index]]&&!canSwim) || lavatiles[map.tiles[index]])
+										 && isMonster) ) )   // no floor //jannik323
 			{
 				return 1; // if there's no floor, or either water/lava then a non-levitating monster sees obstacle.
 			}

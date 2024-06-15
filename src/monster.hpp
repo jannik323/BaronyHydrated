@@ -991,6 +991,9 @@ int numMonsterTypeAliveOnMap(Monster creature, Entity*& lastMonster);
 std::string getMonsterLocalizedName(Monster creature);
 std::string getMonsterLocalizedPlural(Monster creature);
 std::string getMonsterLocalizedInjury(Monster creature);
+const char* getGreetingNPC(Monster monsterType);//jannik323
+
+
 
 //-----RACE SPECIFIC CONSTANTS-----
 

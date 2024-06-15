@@ -438,6 +438,9 @@ list_t* generatePath(int x1, int y1, int x2, int y2, Entity* my, Entity* target,
 		}
 	}
 
+	// get swim status
+	bool canSwim = my->getStats()->type==REPTILIAN && my->isEntityPlayer()==-1;
+	//jannik323
 	// for boulders falling and checking if a player can reach the ladder.
 	bool playerCheckPathToExit = (my && my->behavior == &actPlayer
 		&& target && (target->behavior == &actLadder || target->behavior == &actPortal));
@@ -448,7 +451,7 @@ list_t* generatePath(int x1, int y1, int x2, int y2, Entity* my, Entity* target,
 	int pathMapType = GateGraph::GATE_GRAPH_GROUNDED;
 	if ( !loading )
 	{
-		if ( levitating || playerCheckPathToExit )
+		if ( levitating || playerCheckPathToExit || canSwim)//jannik323
 		{
 			memcpy(pathMap, pathMapFlying, map.width * map.height * sizeof(int));
 			pathMapType = GateGraph::GATE_GRAPH_FLYING;
@@ -523,6 +526,16 @@ list_t* generatePath(int x1, int y1, int x2, int y2, Entity* my, Entity* target,
 			}
 		}
 	}
+	
+	if (canSwim) {//jannik323
+		for (int y = 0; y < map.height; ++y) {
+			for (int x = 0; x < map.width; ++x) {
+				if (!map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height]|| lavatiles[map.tiles[y * MAPLAYERS + x * MAPLAYERS * map.height]]) {
+					pathMap[y + x * map.height] = 0;
+				}
+			}
+		}
+	}//
 
 	Uint32 standingOnTrap = 0; // 0 - not checked.
 	for ( auto entityNode = map.entities->first; entityNode != nullptr; entityNode = entityNode->next )
@@ -912,7 +925,7 @@ void fillPathMap(int* pathMap, int x, int y, int zone)
 
 	int index = y * MAPLAYERS + x * MAPLAYERS * map.height;
 	if ( !map.tiles[OBSTACLELAYER + index] && map.tiles[index] 
-		&& !(swimmingtiles[map.tiles[index]] || lavatiles[map.tiles[index]]) )
+																&& !(swimmingtiles[map.tiles[index]] || lavatiles[map.tiles[index]]) )
 	{
 		obstacle = false;
 	}
