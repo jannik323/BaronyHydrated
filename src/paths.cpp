@@ -425,6 +425,7 @@ list_t* generatePath(int x1, int y1, int x2, int y2, Entity* my, Entity* target,
 
 	// get levitation status
 	bool levitating = false;
+	bool canSwim = false;
 	Stat* stats = my->getStats();
 	if ( stats )
 	{
@@ -436,11 +437,14 @@ list_t* generatePath(int x1, int y1, int x2, int y2, Entity* my, Entity* target,
 		{
 			levitating = true;
 		}
+
+	}
+	//jannik323
+	// get swim status
+	if (my&&stats) {
+		canSwim = my->getStats()->type == REPTILIAN && my->isEntityPlayer() == -1;
 	}
 
-	// get swim status
-	bool canSwim = my->getStats()->type==REPTILIAN && my->isEntityPlayer()==-1;
-	//jannik323
 	// for boulders falling and checking if a player can reach the ladder.
 	bool playerCheckPathToExit = (my && my->behavior == &actPlayer
 		&& target && (target->behavior == &actLadder || target->behavior == &actPortal));
