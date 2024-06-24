@@ -14,6 +14,7 @@ Modded Barony Game that adds :
 #Install Instruction: 
 
 This only works for the Steam version of Barony.
+This mod uses a custom exe file and is thus not compatible with other mods that modify it.
 Back up scores and save files, if you are worried that you will lose them.
 
 You can find the installed Barony path, by right clicking Barony in Steam -> Properties -> Installed Files -> Browse
